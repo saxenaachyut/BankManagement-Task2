@@ -62,10 +62,7 @@ namespace InternshipTaskBankManagement
                         }
                         break;
                     default:
-                        Console.WriteLine("Invalid Selection\n" +
-                            "Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
+                        Console.WriteLine("Invalid Selection");
                         StartMenu(master);
                         break;
                 }
@@ -99,11 +96,11 @@ namespace InternshipTaskBankManagement
                     case SecondMenu.LoginBankStaff:
                         Console.Clear();
                         Console.WriteLine("Enter Username : ");
-                        string userName = Console.ReadLine();
-                        if (bankServices.IFUserExists(userName))
+                        string username = Console.ReadLine();
+                        if (bankServices.IFUserExists(username))
                         {
                             Console.WriteLine("Enter Password : ");
-                            BankStaff bankStaff = bankServices.GetBankStaff(userName);
+                            BankStaff bankStaff = bankServices.GetBankStaff(username);
                             while (!bankStaff.Password.Equals(Console.ReadLine()))
                             {
                                 Console.WriteLine("Incorrect Password Entered, Enter again : ");
@@ -124,11 +121,11 @@ namespace InternshipTaskBankManagement
                     case SecondMenu.LoginCustomer:
                         Console.Clear();
                         Console.WriteLine("Enter Username : ");
-                        userName = Console.ReadLine();
-                        if (bankServices.IFUserExists(userName))
+                        username = Console.ReadLine();
+                        if (bankServices.IFUserExists(username))
                         {
                             Console.WriteLine("Enter Password : ");
-                            Customer customer = bankServices.GetCustomer(userName);
+                            Customer customer = bankServices.GetCustomer(username);
                             while (!customer.Password.Equals(Console.ReadLine()))
                             {
                                 Console.WriteLine("Incorrect Password Entered, Enter again : ");
@@ -146,6 +143,8 @@ namespace InternshipTaskBankManagement
                         }
                         break;
                     default:
+                        Console.WriteLine("Invalid Selection\n");
+                        BankMenu(bankServices);
                         break;
                 }
 
@@ -169,7 +168,7 @@ namespace InternshipTaskBankManagement
                 "5. Modify Service Charges for same bank\n" +
                 "6. Modify Service Charges for different bank\n" +
                 "7. View Transaction History\n" +
-                "8. Revert a Transaction" +
+                "8. Revert a Transaction\n" +
                 "9. Logout");
 
             int integerInput;
@@ -183,27 +182,48 @@ namespace InternshipTaskBankManagement
                     case BankStaffMenu.CreateNewCustomerAccount:
                         Console.Clear();
                         CreateNewCustomerAccount(bankServices);
-                        Console.Clear();
                         StaffMenu(bankStaff, bankServices);
                         break;
+
                     case BankStaffMenu.UpdateCustomerAccount:
+                        Console.Clear();
+                        UpdateCustomerAccount(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
+
                     case BankStaffMenu.DeleteCustomerAccount:
+                        Console.Clear();
+                        DeleteCustomerAccount(bankServices);
+                        StaffMenu(bankStaff,bankServices);
                         break;
+
                     case BankStaffMenu.AddNewCurrency:
+                        Console.Clear();
+                        AddNewCurrency(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
+
                     case BankStaffMenu.ModifyServiceChargeSameBank:
+                        Console.Clear();
+                        ModifyServiceChargeSameBank(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
+
                     case BankStaffMenu.ModifyServiceChargeOtherBank:
                         break;
+                        
                     case BankStaffMenu.ViewTransactionHistory:
                         break;
+
                     case BankStaffMenu.RevertTransaction:
                         break;
+
                     case BankStaffMenu.Logout:
                         BankMenu(bankServices);
                         break;
                     default:
+                        Console.WriteLine("Invalid Selection");
+                        StaffMenu(bankStaff, bankServices);
                         break;
                 }
 
@@ -219,27 +239,137 @@ namespace InternshipTaskBankManagement
 
         public static void CustomerMenu(Customer customer, BankServices bankServices)
         {
-
+            Console.WriteLine("Welcome " + customer.Name + " :");
         }
 
 
         public static void CreateNewCustomerAccount(BankServices bankServices)
         {
-            string name, userName;
+            string name, username;
             Console.WriteLine("Enter Name :");
             name = Console.ReadLine();
             Console.WriteLine("Enter Username :");
-            while (bankServices.IFUserExists(userName = Console.ReadLine()))
+            while (bankServices.IFUserExists(username = Console.ReadLine()))
             {
                 Console.WriteLine("User already exist enter a new Username : ");
             }
 
             Console.WriteLine("Enter Password : ");
             string password = Console.ReadLine();
-            bankServices.AddUser(new Customer(name, userName, password));
+            bankServices.AddUser(new Customer(name, username, password));
             Console.WriteLine("Customer Successfull added\n" +
                 "Press any key to continue...");
             Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void UpdateCustomerAccount(BankServices bankServices)
+        {
+            string username;
+            Console.WriteLine("Enter Username :");
+            while ( !bankServices.IFUserExists(username = Console.ReadLine()))
+            {
+                Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
+                if (username.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
+            }
+
+            
+            Console.WriteLine("Enter New Password : ");
+            bankServices.GetCustomer(username).Password = Console.ReadLine();
+            Console.WriteLine("Password Updated Successfully\n" +
+                "Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+
+        }
+
+        public static void DeleteCustomerAccount(BankServices bankServices)
+        {
+            string username;
+            Console.WriteLine("Enter Username :");
+           while ( !bankServices.IFUserExists(username = Console.ReadLine()))
+            {
+                Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
+                if (username.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
+            }
+            
+
+            Console.WriteLine("Are you sure you want to delete Customer: " + username + ". Enter Y to continue or N to cancel");
+
+            string confirmatiom;
+            while (!(confirmatiom = Console.ReadLine()).Equals("Y"))
+            {
+                Console.WriteLine("Enter Y or N");
+                if(confirmatiom.Equals("N"))
+                {
+                    Console.Clear();
+                    return;
+                }
+
+            }
+
+            bankServices.RemoveUser(username);
+            Console.WriteLine("Customer Successfully Removed\n" +
+                "Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void AddNewCurrency(BankServices bankServices)
+        {
+            string currencyCode, currencyName;
+            double exchangeRate;
+            Console.WriteLine("Enter Currency Code :");
+            while ( bankServices.IFCurrencyExists(currencyCode = Console.ReadLine()) )
+            {
+                Console.WriteLine("Currency already Exists, Enter a new Currency Code :");
+            }
+
+            Console.WriteLine("Enter Currency Name : ");
+            currencyName = Console.ReadLine();
+            Console.WriteLine("Enter Exchange Rate : ");
+            while(!double.TryParse(Console.ReadLine(), out exchangeRate))
+            {
+                Console.WriteLine("Only numbers are acccepted, Enter valid Rate again :");
+            }
+
+            bankServices.AddCurrency(new Currency(currencyName, currencyCode, exchangeRate));
+            Console.Write("Currency succesfully added\n" +
+                "Press any button to continue...");
+            Console.ReadKey();
+            Console.Clear();
+
+        }
+
+        public static void ModifyServiceChargeSameBank(BankServices bankServices)
+        {
+            double newRate;
+            Console.WriteLine("Enter Rate for Same Bank RTGS :");
+            while(!double.TryParse(Console.ReadLine(), out newRate))
+            {
+                Console.WriteLine("Enter valid Rate :");
+            }
+            bankServices.SetSameBankRate(newRate, ServiceCharges.RTGS);
+
+            Console.WriteLine("Enter Rate for Same Bank IMPS :");
+            while (!double.TryParse(Console.ReadLine(), out newRate))
+            {
+                Console.WriteLine("Enter valid Rate :");
+            }
+            bankServices.SetSameBankRate(newRate, ServiceCharges.IMPS);
+
+            Console.WriteLine("Rates for same bank transfers updated successfully\n" +
+                "Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
 
         }
     }

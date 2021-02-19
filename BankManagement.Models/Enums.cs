@@ -32,4 +32,9 @@ namespace InternshipTaskBankManagement
     {
         Deposit = 1, Withdrawl = 2, Transfer = 3
     }
+
+    public enum ServiceCharges
+    {
+        RTGS, IMPS
+    }
 }

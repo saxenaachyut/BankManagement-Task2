@@ -16,7 +16,7 @@ namespace InternshipTaskBankManagement
 
         public Boolean IFUserExists(string Username)
         {
-            foreach (User user in Bank.AccountsList)
+            foreach (var user in Bank.AccountsList)
             {
                 if (Username.Equals(user.UserName))
                 {
@@ -36,30 +36,77 @@ namespace InternshipTaskBankManagement
             Bank.AccountsList.Add(customer);
         }
 
-        public BankStaff GetBankStaff(string userName)
+        public BankStaff GetBankStaff(string username)
         {
-            foreach (BankStaff user in Bank.AccountsList)
+            foreach (User user in Bank.AccountsList)
             {
-                if (userName.Equals(user.UserName))
+                if (username.Equals(user.UserName))
                 {
-                    return user;
+                    return (BankStaff)user;
                 }
             }
 
             return null;
         }
 
-        public Customer GetCustomer(string userName)
+        public Customer GetCustomer(string username)
         {
-            foreach (Customer user in Bank.AccountsList)
+            foreach (User user in Bank.AccountsList)
             {
-                if (userName.Equals(user.UserName))
+                if (username.Equals(user.UserName))
                 {
-                    return user;
+                    return (Customer)user;
                 }
             }
 
             return null;
+        }
+
+        public void RemoveUser(string username)
+        {
+            Bank.AccountsList.Remove(GetCustomer(username));
+        }
+
+        public Boolean IFCurrencyExists(string currencyCode)
+        {
+            foreach(var currencyCodeittr in Bank.CurrenyList)
+            {
+                if(currencyCodeittr.CurrencyCode.Equals(currencyCode))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public void AddCurrency(Currency currency)
+        {
+            Bank.CurrenyList.Add(currency);
+        }
+
+        public void SetSameBankRate(double newRate, ServiceCharges serviceChargeType)
+        {
+            if(serviceChargeType == ServiceCharges.RTGS)
+            {
+                Bank.SameBankRTGS = newRate;
+            }
+            else if (serviceChargeType == ServiceCharges.IMPS)
+            {
+                Bank.SameBankIMPS = newRate;
+            }
+        }
+
+        public void SetOtherBankRate(double newRate, ServiceCharges serviceChargeType)
+        {
+            if (serviceChargeType == ServiceCharges.RTGS)
+            {
+                Bank.OtherBankRTGS = newRate;
+            }
+            else if (serviceChargeType == ServiceCharges.IMPS)
+            {
+                Bank.OtherBankIMPS = newRate;
+            }
         }
     }
 }

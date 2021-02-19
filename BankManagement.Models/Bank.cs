@@ -16,18 +16,20 @@ namespace InternshipTaskBankManagement
 
 
         public List<User> AccountsList;
+        public List<Currency> CurrenyList;
 
         public Bank(string bankName)
         {
             this.Name = bankName;
             DateTime thisDay = new DateTime();
-            BankID = this.Name.Substring(0, 3) + thisDay.ToString("d");
-            AccountsList = new List<User>();
+            this.BankID = this.Name.Substring(0, 3) + thisDay.ToString("d");
+            this.AccountsList = new List<User>();
+            this.CurrenyList = new List<Currency>();
             this.SameBankRTGS = 0;
             this.SameBankIMPS = 5;
             this.OtherBankRTGS = 2;
             this.OtherBankIMPS = 6;
-            this.DefaultCurrency = new Currency("Indian National Rupee", "INR", 0);
+            this.CurrenyList.Add(this.DefaultCurrency = new Currency("Indian National Rupee", "INR", 0));
         }
 
     }
