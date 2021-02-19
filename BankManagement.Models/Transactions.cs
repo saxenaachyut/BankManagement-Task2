@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InternshipTaskBankManagement
 {
-    class Transactions
+    public class Transactions
     {
         public string Sender { get; set; }
         public string Beneficiary { get; set; }

@@ -8,6 +8,7 @@ namespace InternshipTaskBankManagement
     {
         public string AccountID { get; set; }
         public double TotalAmmount { get; set; }
+        public List<Transactions> TransactionList;
 
         public Customer(string name, string userName, string password)
         {
@@ -17,7 +18,7 @@ namespace InternshipTaskBankManagement
             DateTime thisDay = DateTime.Today;
             this.AccountID = Name.Substring(0, 3) + thisDay.ToString("d");
             this.TotalAmmount = 0;
-
+            this.TransactionList = new List<Transactions>();
         }
     }
 }

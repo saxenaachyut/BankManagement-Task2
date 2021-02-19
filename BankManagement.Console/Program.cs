@@ -210,9 +210,14 @@ namespace InternshipTaskBankManagement
                         break;
 
                     case BankStaffMenu.ModifyServiceChargeOtherBank:
+                        Console.Clear();
+                        ModifyServiceChargeOtherBank(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
                         
                     case BankStaffMenu.ViewTransactionHistory:
+                        Console.Clear();
+                        ViewTransactionHistory(bankServices);
                         break;
 
                     case BankStaffMenu.RevertTransaction:
@@ -370,6 +375,40 @@ namespace InternshipTaskBankManagement
                 "Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
+
+        }
+
+        public static void ModifyServiceChargeOtherBank(BankServices bankServices)
+        {
+            double newRate;
+            Console.WriteLine("Enter Rate for Other Bank RTGS :");
+            while (!double.TryParse(Console.ReadLine(), out newRate))
+            {
+                Console.WriteLine("Enter valid Rate :");
+            }
+            bankServices.SetOtherBankRate(newRate, ServiceCharges.RTGS);
+
+            Console.WriteLine("Enter Rate for Other Bank IMPS :");
+            while (!double.TryParse(Console.ReadLine(), out newRate))
+            {
+                Console.WriteLine("Enter valid Rate :");
+            }
+            bankServices.SetOtherBankRate(newRate, ServiceCharges.IMPS);
+
+            Console.WriteLine("Rates for other bank transfers updated successfully\n" +
+                "Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void ViewTransactionHistory(BankServices bankServices)
+        {
+            string username;
+            Console.WriteLine("Enter Customer Username :");
+            while( !bankServices.IFUserExists(username = Console.ReadLine()))
+            {
+                Console.WriteLine("User does not exists, Enter valid Username :");
+            }
 
         }
     }
