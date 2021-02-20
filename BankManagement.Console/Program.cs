@@ -262,9 +262,17 @@ namespace InternshipTaskBankManagement
                 switch (menuOption)
                 {
                     case CustomerMenuOptions.Deposit:
+                        Console.Clear();
                         Deposit(customer, bankServices);
                         CustomerMenu(customer,bankServices);
                         break;
+
+                    case CustomerMenuOptions.Withdraw:
+                        Console.Clear();
+                        Withdraw(customer, bankServices);
+                        CustomerMenu(customer, bankServices);
+                        break;
+
                     default:
                         Console.WriteLine("Invalid Selection");
                         CustomerMenu(customer,bankServices);
@@ -458,10 +466,39 @@ namespace InternshipTaskBankManagement
 
             bankServices.DepositAmount(customer,amount);
             Console.WriteLine("Amount Deposited Successfully\n" +
-                "Closing Total Amount" + bankServices.GetTotalAmount(customer) + " \n" +
+                "Total Closing Amount : " + bankServices.GetTotalAmount(customer) + " \n" +
                 "\n Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
+        }
+
+        public static void Withdraw(Customer customer, BankServices bankServices)
+        {
+            double amount;
+            Console.WriteLine("Enter Amount to Withdraw : ");
+            while (!double.TryParse(Console.ReadLine(), out amount))
+            {
+                Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
+            }
+
+            if( bankServices.IfSufficientFundsAvailable(customer,amount) )
+            {
+                bankServices.WithdrawAmount(customer, amount);
+                Console.WriteLine("Amount Withdrawed Successfully\n" +
+                "Total Closing Amount : " + bankServices.GetTotalAmount(customer) + " \n" +
+                "\n Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+            else
+            {
+                Console.WriteLine("Sufficent Funds not available\n" +
+                    "Total Closing Amount : " + bankServices.GetTotalAmount(customer) + " \n" +
+                    "Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
+            }
+
         }
     }
 }

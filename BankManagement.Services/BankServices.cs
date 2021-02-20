@@ -128,5 +128,25 @@ namespace InternshipTaskBankManagement
         {
             return customer.TotalAmmount;
         }
+
+        public Boolean IfSufficientFundsAvailable(Customer customer, double amount)
+        {
+            if (customer.TotalAmmount > amount)
+                return true;
+            else
+                return false;
+        }
+
+        public void WithdrawAmount(Customer customer, double amount)
+        {
+            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.Withdrawl);
+            if ( IfSufficientFundsAvailable(customer, amount) )
+            {
+                customer.TransactionList.Add(newTransaction);
+                customer.TotalAmmount -= amount;
+            }
+            else
+                return;
+        }
     }
 }
