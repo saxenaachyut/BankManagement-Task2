@@ -161,6 +161,7 @@ namespace InternshipTaskBankManagement
         public static void StaffMenu(BankStaff bankStaff, BankServices bankServices)
         {
             Console.WriteLine("Welcome " + bankStaff.Name + " :\n" +
+                "----------------------------------------------------" +
                 "1. Create new Customer Account\n" +
                 "2. Update Customer Account\n" +
                 "3. Delete Customer Account\n" +
@@ -244,7 +245,41 @@ namespace InternshipTaskBankManagement
 
         public static void CustomerMenu(Customer customer, BankServices bankServices)
         {
-            Console.WriteLine("Welcome " + customer.Name + " :");
+            Console.WriteLine("Welcome " + customer.Name + " :\n" +
+                "----------------------------------------------------" +
+                "1. Deposit Amount\n" +
+                "2. Withdraw Amount\n" +
+                "3. Transfer funds\n" +
+                "4. View Transaction History\n" +
+                "5. Logout");
+
+            int integerInput;
+            CustomerMenuOptions menuOption;
+            if (int.TryParse(Console.ReadLine(), out integerInput))
+            {
+                menuOption = (CustomerMenuOptions)integerInput;
+
+                switch (menuOption)
+                {
+                    case CustomerMenuOptions.Deposit:
+                        Deposit(customer, bankServices);
+                        CustomerMenu(customer,bankServices);
+                        break;
+                    default:
+                        Console.WriteLine("Invalid Selection");
+                        CustomerMenu(customer,bankServices);
+                        break;
+                }
+
+            }
+            else
+            {
+                Console.WriteLine("Invalid Selection");
+                CustomerMenu(customer, bankServices);
+
+            }
+
+
         }
 
 
@@ -410,6 +445,23 @@ namespace InternshipTaskBankManagement
                 Console.WriteLine("User does not exists, Enter valid Username :");
             }
 
+        }
+
+        public static void Deposit(Customer customer, BankServices bankServices)
+        {
+            double amount;
+            Console.WriteLine("Enter Amount to Deposit :");
+            while ( !double.TryParse(Console.ReadLine(), out amount) )
+            {
+                Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
+            }
+
+            bankServices.DepositAmount(customer,amount);
+            Console.WriteLine("Amount Deposited Successfully\n" +
+                "Closing Total Amount" + bankServices.GetTotalAmount(customer) + " \n" +
+                "\n Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
         }
     }
 }

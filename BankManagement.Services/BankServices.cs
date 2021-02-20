@@ -42,6 +42,10 @@ namespace InternshipTaskBankManagement
             {
                 if (username.Equals(user.UserName))
                 {
+                    if(username.GetType() == typeof(Customer))
+                    {
+                        return null;
+                    }
                     return (BankStaff)user;
                 }
             }
@@ -55,6 +59,10 @@ namespace InternshipTaskBankManagement
             {
                 if (username.Equals(user.UserName))
                 {
+                    if (username.GetType() == typeof(Customer))
+                    {
+                        return null;
+                    }
                     return (Customer)user;
                 }
             }
@@ -107,6 +115,18 @@ namespace InternshipTaskBankManagement
             {
                 Bank.OtherBankIMPS = newRate;
             }
+        }
+
+        public void DepositAmount(Customer customer, double amount)
+        {
+            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.Deposit);
+            customer.TransactionList.Add(newTransaction);
+            customer.TotalAmmount += amount;
+        }
+
+        public double GetTotalAmount(Customer customer)
+        {
+            return customer.TotalAmmount;
         }
     }
 }

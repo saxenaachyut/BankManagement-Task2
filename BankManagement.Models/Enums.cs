@@ -28,6 +28,15 @@ namespace InternshipTaskBankManagement
         Logout = 9
     }
 
+    public enum CustomerMenuOptions
+    {
+        Deposit = 1,
+        Withdraw = 2,
+        Transfter = 3,
+        ViewTransactionHistory = 4,
+        Logout = 5
+    }
+
     public enum TransactionTypes
     {
         Deposit = 1, Withdrawl = 2, Transfer = 3
