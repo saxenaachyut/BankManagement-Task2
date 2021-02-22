@@ -148,5 +148,38 @@ namespace InternshipTaskBankManagement
             else
                 return;
         }
+
+        public double GetTrasferAmount(BankOptions bankOption, double amount)
+        {
+            double totaltrasferamount= 0;
+
+            if(bankOption == BankOptions.SameBankRTGS)
+            {
+                totaltrasferamount = amount + amount*(Bank.SameBankRTGS);
+            }
+            else if(bankOption == BankOptions.SameBankIMPS)
+            {
+                totaltrasferamount = amount + amount*(Bank.SameBankIMPS);
+            }
+            else if (bankOption == BankOptions.OtherBankRTGS)
+            {
+                totaltrasferamount = amount + amount*(Bank.OtherBankRTGS);
+            }
+            else if (bankOption == BankOptions.OtherBankIMPS)
+            {
+                totaltrasferamount = amount + amount*(Bank.OtherBankIMPS);
+            }
+
+            return totaltrasferamount;
+        }
+
+        public void SameBankTransferFunds(Customer customer, string benificaryUsername, double amount)
+        {
+            Customer benificiary = GetCustomer(benificaryUsername);
+            customer.TotalAmmount -= amount;
+            customer.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferDebit));
+            benificiary.TotalAmmount += amount;
+            benificiary.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferCredit));
+        }
     }
 }

@@ -32,18 +32,26 @@ namespace InternshipTaskBankManagement
     {
         Deposit = 1,
         Withdraw = 2,
-        Transfter = 3,
+        Transfer = 3,
         ViewTransactionHistory = 4,
         Logout = 5
     }
 
     public enum TransactionTypes
     {
-        Deposit = 1, Withdrawl = 2, Transfer = 3
+        Deposit = 1, Withdrawl = 2, TransferDebit = 3, TransferCredit
     }
 
     public enum ServiceCharges
     {
-        RTGS, IMPS
+        RTGS = 1, IMPS = 2
+    }
+
+    public enum BankOptions
+    {
+        SameBankRTGS = 1,
+        SameBankIMPS = 2,
+        OtherBankRTGS = 3,
+        OtherBankIMPS = 4
     }
 }

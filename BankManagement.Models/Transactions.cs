@@ -12,7 +12,8 @@ namespace InternshipTaskBankManagement
         public string TransactionDate { get; set; }
         public TransactionTypes TransactionType { get; set; }
         public string BankID { get; set; }
-        public double Amount { get; set; }
+        public double CreditAmount { get; set; }
+        public double DebitAmount { get; set; }
 
         public Transactions(string senderUsername, double amount, string bankID, string accountID, TransactionTypes transationType)
         {
@@ -23,7 +24,8 @@ namespace InternshipTaskBankManagement
                 this.Sender = senderUsername;
                 this.Beneficiary = senderUsername;
                 this.BankID = bankID;
-                this.Amount = amount;
+                this.CreditAmount = amount;
+                this.DebitAmount = 0;
                 this.TransactionDate = thisDay.ToString("f");
                 this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
             }
@@ -33,7 +35,8 @@ namespace InternshipTaskBankManagement
                 this.Sender = senderUsername;
                 this.Beneficiary = senderUsername;
                 this.BankID = bankID;
-                this.Amount = amount;
+                this.CreditAmount = 0;
+                this.DebitAmount = amount;
                 this.TransactionDate = thisDay.ToString("f");
                 this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
 
@@ -42,15 +45,32 @@ namespace InternshipTaskBankManagement
 
         public Transactions(string senderUsername, string beneficiaryUsername, double amount, string bankID, string accountID, TransactionTypes transationType)
         {
-            DateTime thisDay = new DateTime();
-            this.TransactionType = TransactionTypes.Transfer;
-            this.Sender = senderUsername;
-            this.Beneficiary = beneficiaryUsername;
-            this.Beneficiary = senderUsername;
-            this.BankID = bankID;
-            this.Amount = amount;
-            this.TransactionDate = thisDay.ToString("f");
-            this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+            if (transationType == TransactionTypes.TransferDebit)
+            {
+                DateTime thisDay = new DateTime();
+                this.TransactionType = TransactionTypes.TransferDebit;
+                this.Sender = senderUsername;
+                this.Beneficiary = beneficiaryUsername;
+                this.Beneficiary = senderUsername;
+                this.BankID = bankID;
+                this.CreditAmount = 0;
+                this.DebitAmount = amount;
+                this.TransactionDate = thisDay.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+            }
+            else if(transationType == TransactionTypes.TransferCredit)
+            {
+                DateTime thisDay = new DateTime();
+                this.TransactionType = TransactionTypes.TransferCredit;
+                this.Sender = senderUsername;
+                this.Beneficiary = beneficiaryUsername;
+                this.Beneficiary = senderUsername;
+                this.BankID = bankID;
+                this.CreditAmount = amount;
+                this.DebitAmount = 0;
+                this.TransactionDate = thisDay.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+            }
         }
 
 
