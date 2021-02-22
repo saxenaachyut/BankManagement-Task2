@@ -2,11 +2,12 @@
 
 namespace InternshipTaskBankManagement
 {
-    class Program
+    public class Program
     {
+        public static Master master;
         static void Main(string[] args)
         {
-            Master master = new Master();
+            master = new Master();
             StartMenu(master);
         }
 
@@ -84,7 +85,8 @@ namespace InternshipTaskBankManagement
             Console.WriteLine("Welcome to " + bankServices.BankName + " Bank :\n" +
                 "-------------------------------------------------------\n" +
                 "1. Login as BankStaff\n" +
-                "2. Login as Customer");
+                "2. Login as Customer\n" +
+                "3. Go Back");
             int integerInput;
             SecondMenu menuOption;
             if (int.TryParse(Console.ReadLine(), out integerInput))
@@ -141,6 +143,10 @@ namespace InternshipTaskBankManagement
                             Console.Clear();
                             BankMenu(bankServices);
                         }
+                        break;
+                    case SecondMenu.GoBack:
+                        Console.Clear();
+                        StartMenu(master);
                         break;
                     default:
                         Console.WriteLine("Invalid Selection\n");
@@ -427,7 +433,6 @@ namespace InternshipTaskBankManagement
                 "Press any key to continue...");
             Console.ReadKey();
             Console.Clear();
-
         }
 
         public static void ModifyServiceChargeOtherBank(BankServices bankServices)
@@ -513,8 +518,10 @@ namespace InternshipTaskBankManagement
         public static void TransferFundsMenu(Customer customer, BankServices bankServices)
         {
             Console.WriteLine("Bank of the Benificiary :\n" +
-                "1. Same bank\n" +
-                "2. Other bank");
+                "1. Same bank (RTGS)\n" +
+                "2. Same bank (IMPS)\n" +
+                "3. Other bank (RTGS)\n" +
+                "4. Other bank (IMPS)");
             int menuOption;
             while( !int.TryParse(Console.ReadLine(), out menuOption) )
             {
@@ -538,11 +545,13 @@ namespace InternshipTaskBankManagement
                     break;
 
                 case BankOptions.OtherBankRTGS:
+                    Console.Clear();
                     OtherBankTransfer(customer, bankServices, BankOptions.OtherBankRTGS);
                     CustomerMenu(customer, bankServices);
                     break;
 
                 case BankOptions.OtherBankIMPS:
+                    Console.Clear();
                     OtherBankTransfer(customer, bankServices, BankOptions.OtherBankIMPS);
                     CustomerMenu(customer, bankServices);
                     break;
@@ -570,7 +579,9 @@ namespace InternshipTaskBankManagement
             {
                 Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
             }
+
             amount = bankServices.GetTrasferAmount(bankOption, amount);
+
             if (bankServices.IfSufficientFundsAvailable(customer, amount))
             {
                 bankServices.SameBankTransferFunds(customer, benificiaryUsername, amount);
@@ -593,10 +604,52 @@ namespace InternshipTaskBankManagement
 
         public static void OtherBankTransfer(Customer customer, BankServices bankServices, BankOptions bankOption)
         {
-            string benificiaryUsername;
-            while (!bankServices.IFUserExists(benificiaryUsername = Console.ReadLine()))
+            Console.WriteLine("Enter Bank Name :");
+            string otherBankName = Console.ReadLine();
+            Bank otherBank;
+            if (master.IfBankExists(otherBankName))
             {
+                otherBank = master.GetBank(otherBankName);
+                BankServices otherBankServices = new BankServices(otherBank);
+                string benificiaryUsername;
+                double amount;
+                Console.WriteLine("Enter Benificary's Username : ");
+                while (!otherBankServices.IFUserExists(benificiaryUsername = Console.ReadLine()) )
+                {
+                    Console.WriteLine("User does not exists, Enter a valid Username :");
+                }
 
+                Console.WriteLine("Enter Amount to transfer :");
+                while (!double.TryParse(Console.ReadLine(), out amount))
+                {
+                    Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
+                }
+
+                amount = bankServices.GetTrasferAmount(bankOption, amount);
+
+                if (bankServices.IfSufficientFundsAvailable(customer, amount))
+                {
+                    bankServices.OtherTransferFunds(customer, otherBankServices.GetCustomer(benificiaryUsername), amount);
+                    Console.WriteLine("Amount Successfull Transfered \n" +
+                        "Total closing amount " + bankServices.GetTotalAmount(customer) +
+                        "\nPress any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+
+                }
+                else
+                {
+                    Console.WriteLine("Insufficent Funds \n" +
+                        "Press any key to continue...");
+                    Console.ReadKey();
+                    Console.Clear();
+                    CustomerMenu(customer, bankServices);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Bank does not exists");
+                CustomerMenu(customer, bankServices);
             }
         }
     }

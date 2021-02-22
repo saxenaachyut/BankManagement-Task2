@@ -155,19 +155,19 @@ namespace InternshipTaskBankManagement
 
             if(bankOption == BankOptions.SameBankRTGS)
             {
-                totaltrasferamount = amount + amount*(Bank.SameBankRTGS);
+                totaltrasferamount = amount + amount*(Bank.SameBankRTGS/100);
             }
             else if(bankOption == BankOptions.SameBankIMPS)
             {
-                totaltrasferamount = amount + amount*(Bank.SameBankIMPS);
+                totaltrasferamount = amount + amount*(Bank.SameBankIMPS/100);
             }
             else if (bankOption == BankOptions.OtherBankRTGS)
             {
-                totaltrasferamount = amount + amount*(Bank.OtherBankRTGS);
+                totaltrasferamount = amount + amount*(Bank.OtherBankRTGS/100);
             }
             else if (bankOption == BankOptions.OtherBankIMPS)
             {
-                totaltrasferamount = amount + amount*(Bank.OtherBankIMPS);
+                totaltrasferamount = amount + amount*(Bank.OtherBankIMPS/100);
             }
 
             return totaltrasferamount;
@@ -180,6 +180,14 @@ namespace InternshipTaskBankManagement
             customer.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferDebit));
             benificiary.TotalAmmount += amount;
             benificiary.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferCredit));
+        }
+
+        public void OtherTransferFunds(Customer customer, Customer benificiary, double amount)
+        {
+            customer.TotalAmmount -= amount;
+            customer.TransactionList.Add(new Transactions(customer.UserName, benificiary.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferDebit));
+            benificiary.TotalAmmount += amount;
+            benificiary.TransactionList.Add(new Transactions(customer.UserName, benificiary.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferCredit));
         }
     }
 }

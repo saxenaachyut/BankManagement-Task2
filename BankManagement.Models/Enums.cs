@@ -11,7 +11,7 @@ namespace InternshipTaskBankManagement
 
     public enum SecondMenu
     {
-        LoginBankStaff = 1, LoginCustomer = 2
+        LoginBankStaff = 1, LoginCustomer = 2, GoBack = 3
 
     }
 
