@@ -328,7 +328,12 @@ namespace InternshipTaskBankManagement
             Console.WriteLine("Enter Username :");
             while (bankServices.IFUserExists(username = Console.ReadLine()))
             {
-                Console.WriteLine("User already exist enter a new Username : ");
+                Console.WriteLine("User already exist enter a new Username or 0 to exit : ");
+                if (username.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
             }
 
             Console.WriteLine("Enter Password : ");
@@ -407,7 +412,12 @@ namespace InternshipTaskBankManagement
             Console.WriteLine("Enter Currency Code :");
             while ( bankServices.IFCurrencyExists(currencyCode = Console.ReadLine()) )
             {
-                Console.WriteLine("Currency already Exists, Enter a new Currency Code :");
+                Console.WriteLine("Currency already Exists, Enter a new Currency Code or 0 to exit :");
+                if (currencyCode.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
             }
 
             Console.WriteLine("Enter Currency Name : ");
@@ -618,13 +628,24 @@ namespace InternshipTaskBankManagement
             Console.WriteLine("Enter Benificary's Username : ");
             while( !bankServices.IFUserExists(beneficiaryUsername = Console.ReadLine()) )
             {
-                Console.WriteLine("User does not exists, Enter a valid Username :");
+                Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
+                if (beneficiaryUsername.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
+
             }
 
             Console.WriteLine("Enter Amount to transfer :");
             while (!double.TryParse(Console.ReadLine(), out amount))
             {
-                Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
+                Console.WriteLine("Only Numbers Accepted, Enter Amount again or 0 to exit :");
+                if (amount.Equals("0"))
+                {
+                    Console.Clear();
+                    return;
+                }
             }
 
             amount = bankServices.GetTrasferAmount(bankOption, amount);
@@ -663,13 +684,23 @@ namespace InternshipTaskBankManagement
                 Console.WriteLine("Enter Benificary's Username : ");
                 while (!otherBankServices.IFUserExists(beneficiaryUsername = Console.ReadLine()) )
                 {
-                    Console.WriteLine("User does not exists, Enter a valid Username :");
+                    Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
+                    if (beneficiaryUsername.Equals("0"))
+                    {
+                        Console.Clear();
+                        return;
+                    }
                 }
 
                 Console.WriteLine("Enter Amount to transfer :");
                 while (!double.TryParse(Console.ReadLine(), out amount))
                 {
-                    Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
+                    Console.WriteLine("Only Numbers Accepted, Enter Amount again or 0 to exit :");
+                    if (amount.Equals("0"))
+                    {
+                        Console.Clear();
+                        return;
+                    }
                 }
 
                 amount = bankServices.GetTrasferAmount(bankOption, amount);
