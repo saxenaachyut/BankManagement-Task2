@@ -14,8 +14,10 @@ namespace InternshipTaskBankManagement
         public string BankID { get; set; }
         public double CreditAmount { get; set; }
         public double DebitAmount { get; set; }
+        public string SenderBankName { get; set; }
+        public string BeneficiaryBankName { get; set; }
 
-        public Transactions(string senderUsername, double amount, string bankID, string accountID, TransactionTypes transationType)
+        public Transactions(string senderUsername, double amount, string bankID, string accountID, string senderBankName, TransactionTypes transationType)
         {
             DateTime thisDay = new DateTime();
             if (transationType == TransactionTypes.Deposit)
@@ -28,6 +30,8 @@ namespace InternshipTaskBankManagement
                 this.DebitAmount = 0;
                 this.TransactionDate = thisDay.ToString("f");
                 this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.SenderBankName = senderBankName;
+                this.BeneficiaryBankName = senderBankName;
             }
             else if (transationType == TransactionTypes.Withdrawl)
             {
@@ -39,11 +43,13 @@ namespace InternshipTaskBankManagement
                 this.DebitAmount = amount;
                 this.TransactionDate = thisDay.ToString("f");
                 this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.SenderBankName = senderBankName;
+                this.BeneficiaryBankName = senderBankName;
 
             }
         }
 
-        public Transactions(string senderUsername, string beneficiaryUsername, double amount, string bankID, string accountID, TransactionTypes transationType)
+        public Transactions(string senderUsername, string beneficiaryUsername, double amount, string bankID, string accountID, string senderBankName, string beneficiaryBankName, TransactionTypes transationType)
         {
             if (transationType == TransactionTypes.TransferDebit)
             {
@@ -51,25 +57,26 @@ namespace InternshipTaskBankManagement
                 this.TransactionType = TransactionTypes.TransferDebit;
                 this.Sender = senderUsername;
                 this.Beneficiary = beneficiaryUsername;
-                this.Beneficiary = senderUsername;
                 this.BankID = bankID;
                 this.CreditAmount = 0;
                 this.DebitAmount = amount;
                 this.TransactionDate = thisDay.ToString("f");
                 this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.SenderBankName = senderBankName;
+                this.BeneficiaryBankName = beneficiaryBankName;
             }
             else if(transationType == TransactionTypes.TransferCredit)
             {
-                DateTime thisDay = new DateTime();
                 this.TransactionType = TransactionTypes.TransferCredit;
                 this.Sender = senderUsername;
                 this.Beneficiary = beneficiaryUsername;
-                this.Beneficiary = senderUsername;
                 this.BankID = bankID;
                 this.CreditAmount = amount;
                 this.DebitAmount = 0;
-                this.TransactionDate = thisDay.ToString("f");
-                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.TransactionDate = DateTime.Now.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
+                this.SenderBankName = senderBankName;
+                this.BeneficiaryBankName = beneficiaryBankName;
             }
         }
 

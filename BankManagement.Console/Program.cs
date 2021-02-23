@@ -33,10 +33,13 @@ namespace InternshipTaskBankManagement
                         if (!master.IfBankExists(bankName))
                         {
                             master.AddBank(bankName);
-                            Console.Clear();
+                            //Console.Clear();
                             Console.WriteLine("Enter password for Admin Account");
                             BankServices bankServices = new BankServices(master.GetBank(bankName));
                             bankServices.AddUser(new BankStaff("Admin", "Admin", Console.ReadLine()));
+                            Console.WriteLine("Bank Successfull created and added \n" +
+                                "Press any key to continue...");
+                            Console.ReadKey();
                             Console.Clear();
                         }
                         else
@@ -225,9 +228,13 @@ namespace InternshipTaskBankManagement
                     case BankStaffMenu.ViewTransactionHistory:
                         Console.Clear();
                         ViewTransactionHistory(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
 
                     case BankStaffMenu.RevertTransaction:
+                        Console.Clear();
+                        RevertTransaction(bankServices);
+                        StaffMenu(bankStaff, bankServices);
                         break;
 
                     case BankStaffMenu.Logout:
@@ -278,12 +285,19 @@ namespace InternshipTaskBankManagement
                         Withdraw(customer, bankServices);
                         CustomerMenu(customer, bankServices);
                         break;
+
                     case CustomerMenuOptions.Transfer:
                         Console.Clear();
                         TransferFundsMenu(customer, bankServices);
                         CustomerMenu(customer, bankServices);
-                        Console.Clear();
                         break;
+
+                    case CustomerMenuOptions.ViewTransactionHistory:
+                        Console.Clear();
+                        ViewTransactionHistory(customer, bankServices);
+                        CustomerMenu(customer, bankServices);
+                        break;
+
                     case CustomerMenuOptions.Logout:
                         BankMenu(bankServices);
                         break;
@@ -319,7 +333,7 @@ namespace InternshipTaskBankManagement
 
             Console.WriteLine("Enter Password : ");
             string password = Console.ReadLine();
-            bankServices.AddUser(new Customer(name, username, password));
+            bankServices.AddUser(new Customer(name, username, password, bankServices.BankName));
             Console.WriteLine("Customer Successfull added\n" +
                 "Press any key to continue...");
             Console.ReadKey();
@@ -460,13 +474,46 @@ namespace InternshipTaskBankManagement
 
         public static void ViewTransactionHistory(BankServices bankServices)
         {
-            string username;
+            string customerUsername;
             Console.WriteLine("Enter Customer Username :");
-            while( !bankServices.IFUserExists(username = Console.ReadLine()))
+            while( !bankServices.IFUserExists(customerUsername = Console.ReadLine()))
             {
                 Console.WriteLine("User does not exists, Enter valid Username :");
             }
 
+            Customer customer = bankServices.GetCustomer(customerUsername);
+            foreach (Transactions transaction in customer.TransactionList)
+            {
+                Console.WriteLine("Transaction ID - " + transaction.TransactionID + "\n");
+                Console.WriteLine("Transaction Date - " + transaction.TransactionDate + "\n");
+                Console.WriteLine("Transaction Type - " + transaction.TransactionType + "\n");
+                Console.WriteLine("Sender - " + transaction.Sender + "\n");
+                Console.WriteLine("Benificiary - " + transaction.Beneficiary + "\n");
+                Console.WriteLine("Credit Amount - " + transaction.CreditAmount + "\n");
+                Console.WriteLine("Debit Amount - " + transaction.DebitAmount + "\n");
+            }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void ViewTransactionHistory(Customer customer,BankServices bankServices)
+        {            
+            foreach(Transactions transaction in customer.TransactionList)
+            {
+                Console.WriteLine("Transaction ID - " + transaction.TransactionID + "\n");
+                Console.WriteLine("Transaction Date - " + transaction.TransactionDate + "\n");
+                Console.WriteLine("Transaction Type - " + transaction.TransactionType + "\n");
+                Console.WriteLine("Sender - " + transaction.Sender + "\n");
+                Console.WriteLine("Benificiary - " + transaction.Beneficiary + "\n");
+                Console.WriteLine("Credit Amount - " + transaction.CreditAmount + "\n");
+                Console.WriteLine("Debit Amount - " + transaction.DebitAmount + "\n\n");
+            }
+
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
         }
 
         public static void Deposit(Customer customer, BankServices bankServices)
@@ -566,10 +613,10 @@ namespace InternshipTaskBankManagement
 
         public static void SameBankTransfer(Customer customer, BankServices bankServices, BankOptions bankOption)
         {
-            string benificiaryUsername;
+            string beneficiaryUsername;
             double amount;
             Console.WriteLine("Enter Benificary's Username : ");
-            while( !bankServices.IFUserExists(benificiaryUsername = Console.ReadLine()) )
+            while( !bankServices.IFUserExists(beneficiaryUsername = Console.ReadLine()) )
             {
                 Console.WriteLine("User does not exists, Enter a valid Username :");
             }
@@ -584,7 +631,7 @@ namespace InternshipTaskBankManagement
 
             if (bankServices.IfSufficientFundsAvailable(customer, amount))
             {
-                bankServices.SameBankTransferFunds(customer, benificiaryUsername, amount);
+                bankServices.SameBankTransferFunds(customer, beneficiaryUsername, amount);
                 Console.WriteLine("Amount Successfull Transfered \n" +
                     "Total closing amount " + bankServices.GetTotalAmount(customer) +
                     "\nPress any key to continue...");
@@ -611,10 +658,10 @@ namespace InternshipTaskBankManagement
             {
                 otherBank = master.GetBank(otherBankName);
                 BankServices otherBankServices = new BankServices(otherBank);
-                string benificiaryUsername;
+                string beneficiaryUsername;
                 double amount;
                 Console.WriteLine("Enter Benificary's Username : ");
-                while (!otherBankServices.IFUserExists(benificiaryUsername = Console.ReadLine()) )
+                while (!otherBankServices.IFUserExists(beneficiaryUsername = Console.ReadLine()) )
                 {
                     Console.WriteLine("User does not exists, Enter a valid Username :");
                 }
@@ -629,7 +676,7 @@ namespace InternshipTaskBankManagement
 
                 if (bankServices.IfSufficientFundsAvailable(customer, amount))
                 {
-                    bankServices.OtherTransferFunds(customer, otherBankServices.GetCustomer(benificiaryUsername), amount);
+                    bankServices.OtherTransferFunds(customer, otherBankServices.GetCustomer(beneficiaryUsername), amount);
                     Console.WriteLine("Amount Successfull Transfered \n" +
                         "Total closing amount " + bankServices.GetTotalAmount(customer) +
                         "\nPress any key to continue...");
@@ -650,6 +697,38 @@ namespace InternshipTaskBankManagement
             {
                 Console.WriteLine("Bank does not exists");
                 CustomerMenu(customer, bankServices);
+            }
+        }
+
+        public static void RevertTransaction(BankServices bankService)
+        {
+            string transactionID;
+            Console.WriteLine("Enter Transaction ID :");
+            transactionID = Console.ReadLine();
+            if (bankService.IFTransactionExists(transactionID))
+            {
+                if ( bankService.GetSenderUsername(transactionID).Equals(bankService.GetBeneficiaryUsername(transactionID)) )
+                {
+                    bankService.RevertTransaction(bankService.GetCustomer(bankService.GetSenderUsername(transactionID)), transactionID);
+                }
+                else if( bankService.GetSenderUsername(transactionID).Equals(bankService.GetBeneficiaryBankName(transactionID)) )
+                {
+                    bankService.RevertTransaction(bankService.GetCustomer(bankService.GetSenderUsername(transactionID)), transactionID);
+                    bankService.RevertTransaction(bankService.GetCustomer(bankService.GetBeneficiaryUsername(transactionID)), transactionID);
+                }
+                else
+                {
+                    BankServices beneficiaryBankService = new BankServices(master.GetBank(bankService.GetBeneficiaryBankName(transactionID)));
+                    bankService.RevertTransaction(bankService.GetCustomer(bankService.GetSenderUsername(transactionID)), transactionID);
+                    beneficiaryBankService.RevertTransaction(beneficiaryBankService.GetCustomer(beneficiaryBankService.GetBeneficiaryUsername(transactionID)), transactionID);
+                }
+            }
+            else
+            {
+                Console.WriteLine("Transaction does not exists\n" +
+                    "Press any key to continue...");
+                Console.ReadKey();
+                Console.Clear();
             }
         }
     }

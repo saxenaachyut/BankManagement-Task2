@@ -42,7 +42,7 @@ namespace InternshipTaskBankManagement
             {
                 if (username.Equals(user.UserName))
                 {
-                    if(username.GetType() == typeof(Customer))
+                    if (username.GetType() == typeof(Customer))
                     {
                         return null;
                     }
@@ -77,9 +77,9 @@ namespace InternshipTaskBankManagement
 
         public Boolean IFCurrencyExists(string currencyCode)
         {
-            foreach(var currencyCodeittr in Bank.CurrenyList)
+            foreach (var currencyCodeittr in Bank.CurrenyList)
             {
-                if(currencyCodeittr.CurrencyCode.Equals(currencyCode))
+                if (currencyCodeittr.CurrencyCode.Equals(currencyCode))
                 {
                     return true;
                 }
@@ -95,7 +95,7 @@ namespace InternshipTaskBankManagement
 
         public void SetSameBankRate(double newRate, ServiceCharges serviceChargeType)
         {
-            if(serviceChargeType == ServiceCharges.RTGS)
+            if (serviceChargeType == ServiceCharges.RTGS)
             {
                 Bank.SameBankRTGS = newRate;
             }
@@ -119,7 +119,7 @@ namespace InternshipTaskBankManagement
 
         public void DepositAmount(Customer customer, double amount)
         {
-            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.Deposit);
+            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, TransactionTypes.Deposit);
             customer.TransactionList.Add(newTransaction);
             customer.TotalAmmount += amount;
         }
@@ -139,8 +139,8 @@ namespace InternshipTaskBankManagement
 
         public void WithdrawAmount(Customer customer, double amount)
         {
-            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.Withdrawl);
-            if ( IfSufficientFundsAvailable(customer, amount) )
+            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, TransactionTypes.Withdrawl);
+            if (IfSufficientFundsAvailable(customer, amount))
             {
                 customer.TransactionList.Add(newTransaction);
                 customer.TotalAmmount -= amount;
@@ -151,43 +151,145 @@ namespace InternshipTaskBankManagement
 
         public double GetTrasferAmount(BankOptions bankOption, double amount)
         {
-            double totaltrasferamount= 0;
+            double totaltrasferamount = 0;
 
-            if(bankOption == BankOptions.SameBankRTGS)
+            if (bankOption == BankOptions.SameBankRTGS)
             {
-                totaltrasferamount = amount + amount*(Bank.SameBankRTGS/100);
+                totaltrasferamount = amount + amount * (Bank.SameBankRTGS / 100);
             }
-            else if(bankOption == BankOptions.SameBankIMPS)
+            else if (bankOption == BankOptions.SameBankIMPS)
             {
-                totaltrasferamount = amount + amount*(Bank.SameBankIMPS/100);
+                totaltrasferamount = amount + amount * (Bank.SameBankIMPS / 100);
             }
             else if (bankOption == BankOptions.OtherBankRTGS)
             {
-                totaltrasferamount = amount + amount*(Bank.OtherBankRTGS/100);
+                totaltrasferamount = amount + amount * (Bank.OtherBankRTGS / 100);
             }
             else if (bankOption == BankOptions.OtherBankIMPS)
             {
-                totaltrasferamount = amount + amount*(Bank.OtherBankIMPS/100);
+                totaltrasferamount = amount + amount * (Bank.OtherBankIMPS / 100);
             }
 
             return totaltrasferamount;
         }
 
-        public void SameBankTransferFunds(Customer customer, string benificaryUsername, double amount)
+        public void SameBankTransferFunds(Customer customer, string beneficaryUsername, double amount)
         {
-            Customer benificiary = GetCustomer(benificaryUsername);
+            Customer beneficiary = GetCustomer(beneficaryUsername);
             customer.TotalAmmount -= amount;
-            customer.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferDebit));
-            benificiary.TotalAmmount += amount;
-            benificiary.TransactionList.Add(new Transactions(customer.UserName, benificaryUsername, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferCredit));
+            customer.TransactionList.Add(new Transactions(customer.UserName, beneficaryUsername, amount, Bank.BankID, customer.AccountID, customer.BankName, customer.BankName, TransactionTypes.TransferDebit));
+            beneficiary.TotalAmmount += amount;
+            beneficiary.TransactionList.Add(new Transactions(customer.UserName, beneficaryUsername, amount, Bank.BankID, customer.AccountID, customer.BankName, customer.BankName, TransactionTypes.TransferCredit));
         }
 
-        public void OtherTransferFunds(Customer customer, Customer benificiary, double amount)
+        public void OtherTransferFunds(Customer customer, Customer beneficiary, double amount)
         {
             customer.TotalAmmount -= amount;
-            customer.TransactionList.Add(new Transactions(customer.UserName, benificiary.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferDebit));
-            benificiary.TotalAmmount += amount;
-            benificiary.TransactionList.Add(new Transactions(customer.UserName, benificiary.UserName, amount, Bank.BankID, customer.AccountID, TransactionTypes.TransferCredit));
+            customer.TransactionList.Add(new Transactions(customer.UserName, beneficiary.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, beneficiary.BankName, TransactionTypes.TransferDebit));
+            beneficiary.TotalAmmount += amount;
+            beneficiary.TransactionList.Add(new Transactions(customer.UserName, beneficiary.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, beneficiary.BankName, TransactionTypes.TransferCredit));
+        }
+
+        public Boolean IFTransactionExists(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public Transactions GetTransaction(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return transaction;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public string GetSenderUsername(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return transaction.Sender;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public string GetBeneficiaryUsername(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return transaction.Beneficiary;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        public string GetBeneficiaryBankName(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return transaction.BeneficiaryBankName;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+        public void RevertTransaction(Customer customer, string transactionID)
+        {
+            foreach (Transactions transaction in customer.TransactionList)
+            {
+                if (transaction.TransactionID.Equals(transactionID))
+                {
+                    customer.TotalAmmount -= transaction.CreditAmount;
+                    customer.TotalAmmount += transaction.DebitAmount;
+                    customer.TransactionList.Remove(transaction);
+                    break;
+                }
+            }
         }
     }
 }

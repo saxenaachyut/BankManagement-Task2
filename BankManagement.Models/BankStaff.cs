@@ -15,7 +15,7 @@ namespace InternshipTaskBankManagement
             this.UserName = userName;
             this.Password = password;
             DateTime thisDay = DateTime.Today;
-            this.AccountID = Name.Substring(0, 3) + thisDay.ToString("d");
+            this.AccountID = Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
         }
     }
 

@@ -21,8 +21,7 @@ namespace InternshipTaskBankManagement
         public Bank(string bankName)
         {
             this.Name = bankName;
-            DateTime thisDay = new DateTime();
-            this.BankID = this.Name.Substring(0, 3) + thisDay.ToString("d");
+            this.BankID = this.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
             this.AccountsList = new List<User>();
             this.CurrenyList = new List<Currency>();
             this.SameBankRTGS = 0;
