@@ -19,7 +19,6 @@ namespace InternshipTaskBankManagement
 
         public Transactions(string senderUsername, double amount, string bankID, string accountID, string senderBankName, TransactionTypes transationType)
         {
-            DateTime thisDay = new DateTime();
             if (transationType == TransactionTypes.Deposit)
             {
                 this.TransactionType = TransactionTypes.Deposit;
@@ -28,8 +27,8 @@ namespace InternshipTaskBankManagement
                 this.BankID = bankID;
                 this.CreditAmount = amount;
                 this.DebitAmount = 0;
-                this.TransactionDate = thisDay.ToString("f");
-                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.TransactionDate = DateTime.Now.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
                 this.SenderBankName = senderBankName;
                 this.BeneficiaryBankName = senderBankName;
             }
@@ -41,8 +40,8 @@ namespace InternshipTaskBankManagement
                 this.BankID = bankID;
                 this.CreditAmount = 0;
                 this.DebitAmount = amount;
-                this.TransactionDate = thisDay.ToString("f");
-                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.TransactionDate = DateTime.Now.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
                 this.SenderBankName = senderBankName;
                 this.BeneficiaryBankName = senderBankName;
 
@@ -53,15 +52,14 @@ namespace InternshipTaskBankManagement
         {
             if (transationType == TransactionTypes.TransferDebit)
             {
-                DateTime thisDay = new DateTime();
                 this.TransactionType = TransactionTypes.TransferDebit;
                 this.Sender = senderUsername;
                 this.Beneficiary = beneficiaryUsername;
                 this.BankID = bankID;
                 this.CreditAmount = 0;
                 this.DebitAmount = amount;
-                this.TransactionDate = thisDay.ToString("f");
-                this.TransactionID = "TXN" + bankID + accountID + thisDay.ToString("d");
+                this.TransactionDate = DateTime.Now.ToString("f");
+                this.TransactionID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
                 this.SenderBankName = senderBankName;
                 this.BeneficiaryBankName = beneficiaryBankName;
             }

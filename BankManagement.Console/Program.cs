@@ -711,7 +711,7 @@ namespace InternshipTaskBankManagement
                 {
                     bankService.RevertTransaction(bankService.GetCustomer(bankService.GetSenderUsername(transactionID)), transactionID);
                 }
-                else if( bankService.GetSenderUsername(transactionID).Equals(bankService.GetBeneficiaryBankName(transactionID)) )
+                else if( bankService.GetSenderBankName(transactionID).Equals(bankService.GetBeneficiaryBankName(transactionID)) )
                 {
                     bankService.RevertTransaction(bankService.GetCustomer(bankService.GetSenderUsername(transactionID)), transactionID);
                     bankService.RevertTransaction(bankService.GetCustomer(bankService.GetBeneficiaryUsername(transactionID)), transactionID);

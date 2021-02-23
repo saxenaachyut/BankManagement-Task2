@@ -244,6 +244,26 @@ namespace InternshipTaskBankManagement
             return null;
         }
 
+        public string GetSenderBankName(string transactionID)
+        {
+            foreach (Customer customer in Bank.AccountsList)
+            {
+                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transactions transaction in customer.TransactionList)
+                    {
+                        if (transaction.TransactionID.Equals(transactionID))
+                        {
+                            return transaction.SenderBankName;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+
+
         public string GetBeneficiaryUsername(string transactionID)
         {
             foreach (Customer customer in Bank.AccountsList)
