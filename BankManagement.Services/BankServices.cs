@@ -2,23 +2,36 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace InternshipTaskBankManagement
+namespace Bank
 {
     public class BankServices
     {
-        public Bank Bank;
-        public string BankName;
-        public BankServices(Bank bank)
+
+        public void SetupNewBankStaff(BankStaff bankStaff, string name, string username, string password)
         {
-            this.Bank = bank;
-            BankName = bank.Name;
+            bankStaff.Name = name;
+            bankStaff.UserName = username;
+            bankStaff.Password = password;
+            DateTime thisDay = DateTime.Today;
+            bankStaff.AccountID = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
         }
 
-        public Boolean IFUserExists(string Username)
+        public void SetupNewCustomer(Bank bank, Customer customer, string name, string username, string password)
         {
-            foreach (var user in Bank.AccountsList)
+            customer.Name = name;
+            customer.UserName = username;
+            customer.Password = password;
+            DateTime thisDay = DateTime.Today;
+            customer.AccountID = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+            customer.TotalAmmount = 0;
+            customer.TransactionList = new List<Transaction>();
+            customer.BankName = bank.Name;
+        }
+        public Boolean IfStaffExists(Bank bank, string Username)
+        {
+            foreach (var staff in bank.StaffList)
             {
-                if (Username.Equals(user.UserName))
+                if (Username.Equals(staff.UserName))
                 {
                     return true;
                 }
@@ -26,58 +39,62 @@ namespace InternshipTaskBankManagement
             return false;
         }
 
-        public void AddUser(BankStaff bankStaff)
+        public Boolean IFCustomerExists(Bank bank, string Username)
         {
-            Bank.AccountsList.Add(bankStaff);
-        }
-
-        public void AddUser(Customer customer)
-        {
-            Bank.AccountsList.Add(customer);
-        }
-
-        public BankStaff GetBankStaff(string username)
-        {
-            foreach (User user in Bank.AccountsList)
+            foreach (var customer in bank.AccountsList)
             {
-                if (username.Equals(user.UserName))
+                if (Username.Equals(customer.UserName))
                 {
-                    if (username.GetType() == typeof(Customer))
-                    {
-                        return null;
-                    }
-                    return (BankStaff)user;
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void AddBankStaff(Bank bank, BankStaff bankStaff)
+        {
+            bank.StaffList.Add(bankStaff);
+        }
+
+        public void AddCustomer(Bank bank, Customer customer)
+        {
+            bank.AccountsList.Add(customer);
+        }
+
+        public BankStaff GetBankStaff(Bank bank, string username)
+        {
+            foreach (BankStaff bankStaff in bank.StaffList)
+            {
+                if (username.Equals(bankStaff.UserName))
+                {
+                    return bankStaff;
                 }
             }
 
             return null;
         }
 
-        public Customer GetCustomer(string username)
+        public Customer GetCustomer(Bank bank, string username)
         {
-            foreach (User user in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
-                if (username.Equals(user.UserName))
+                if (username.Equals(customer.UserName))
                 {
-                    if (username.GetType() == typeof(Customer))
-                    {
-                        return null;
-                    }
-                    return (Customer)user;
+                    return customer;
                 }
             }
 
             return null;
         }
 
-        public void RemoveUser(string username)
+        public void RemoveCustomer(Bank bank, string username)
         {
-            Bank.AccountsList.Remove(GetCustomer(username));
+            bank.AccountsList.Remove(GetCustomer(bank,username));
         }
 
-        public Boolean IFCurrencyExists(string currencyCode)
+        public Boolean IFCurrencyExists(Bank bank, string currencyCode)
         {
-            foreach (var currencyCodeittr in Bank.CurrenyList)
+            foreach (var currencyCodeittr in bank.CurrenyList)
             {
                 if (currencyCodeittr.CurrencyCode.Equals(currencyCode))
                 {
@@ -88,40 +105,46 @@ namespace InternshipTaskBankManagement
             return false;
         }
 
-        public void AddCurrency(Currency currency)
+        public void SetupNewCurrency(Currency currency, string name, string currencyCode, double exchangeRate)
         {
-            Bank.CurrenyList.Add(currency);
+            currency.Name = name;
+            currency.CurrencyCode = currencyCode;
+            currency.ExcahngeRate = exchangeRate;
         }
 
-        public void SetSameBankRate(double newRate, ServiceCharges serviceChargeType)
+        public void AddCurrency(Bank bank, Currency currency)
+        {
+            bank.CurrenyList.Add(currency);
+        }
+
+        public void SetSameBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType)
         {
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                Bank.SameBankRTGS = newRate;
+                bank.SameBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                Bank.SameBankIMPS = newRate;
+                bank.SameBankIMPS = newRate;
             }
         }
 
-        public void SetOtherBankRate(double newRate, ServiceCharges serviceChargeType)
+        public void SetOtherBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType)
         {
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                Bank.OtherBankRTGS = newRate;
+                bank.OtherBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                Bank.OtherBankIMPS = newRate;
+                bank.OtherBankIMPS = newRate;
             }
         }
 
-        public void DepositAmount(Customer customer, double amount)
+        public void DepositAmount(Customer customer, Transaction transaction)
         {
-            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, TransactionTypes.Deposit);
-            customer.TransactionList.Add(newTransaction);
-            customer.TotalAmmount += amount;
+            customer.TransactionList.Add(transaction);
+            customer.TotalAmmount += transaction.Amount;
         }
 
         public double GetTotalAmount(Customer customer)
@@ -137,68 +160,58 @@ namespace InternshipTaskBankManagement
                 return false;
         }
 
-        public void WithdrawAmount(Customer customer, double amount)
+        public void WithdrawAmount(Customer customer, Transaction transaction)
         {
-            Transactions newTransaction = new Transactions(customer.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, TransactionTypes.Withdrawl);
-            if (IfSufficientFundsAvailable(customer, amount))
+            if (IfSufficientFundsAvailable(customer, transaction.Amount))
             {
-                customer.TransactionList.Add(newTransaction);
-                customer.TotalAmmount -= amount;
+                customer.TransactionList.Add(transaction);
+                customer.TotalAmmount -= transaction.Amount;
             }
             else
                 return;
         }
 
-        public double GetTrasferAmount(BankOptions bankOption, double amount)
+        public double GetTrasferAmount(Bank bank, FundTransferOptions bankOption, double amount)
         {
             double totaltrasferamount = 0;
 
-            if (bankOption == BankOptions.SameBankRTGS)
+            if (bankOption == FundTransferOptions.SameBankRTGS)
             {
-                totaltrasferamount = amount + amount * (Bank.SameBankRTGS / 100);
+                totaltrasferamount = amount + amount * (bank.SameBankRTGS / 100);
             }
-            else if (bankOption == BankOptions.SameBankIMPS)
+            else if (bankOption == FundTransferOptions.SameBankIMPS)
             {
-                totaltrasferamount = amount + amount * (Bank.SameBankIMPS / 100);
+                totaltrasferamount = amount + amount * (bank.SameBankIMPS / 100);
             }
-            else if (bankOption == BankOptions.OtherBankRTGS)
+            else if (bankOption == FundTransferOptions.OtherBankRTGS)
             {
-                totaltrasferamount = amount + amount * (Bank.OtherBankRTGS / 100);
+                totaltrasferamount = amount + amount * (bank.OtherBankRTGS / 100);
             }
-            else if (bankOption == BankOptions.OtherBankIMPS)
+            else if (bankOption == FundTransferOptions.OtherBankIMPS)
             {
-                totaltrasferamount = amount + amount * (Bank.OtherBankIMPS / 100);
+                totaltrasferamount = amount + amount * (bank.OtherBankIMPS / 100);
             }
 
             return totaltrasferamount;
         }
 
-        public void SameBankTransferFunds(Customer customer, string beneficaryUsername, double amount)
+        public void TransferFunds(Customer customer, Customer beneficiary, Transaction debitTransaction, Transaction creditTransaction)
         {
-            Customer beneficiary = GetCustomer(beneficaryUsername);
-            customer.TotalAmmount -= amount;
-            customer.TransactionList.Add(new Transactions(customer.UserName, beneficaryUsername, amount, Bank.BankID, customer.AccountID, customer.BankName, customer.BankName, TransactionTypes.TransferDebit));
-            beneficiary.TotalAmmount += amount;
-            beneficiary.TransactionList.Add(new Transactions(customer.UserName, beneficaryUsername, amount, Bank.BankID, customer.AccountID, customer.BankName, customer.BankName, TransactionTypes.TransferCredit));
+            customer.TotalAmmount -= debitTransaction.Amount;
+            customer.TransactionList.Add(debitTransaction);
+            beneficiary.TotalAmmount += creditTransaction.Amount;
+            beneficiary.TransactionList.Add(creditTransaction);
         }
 
-        public void OtherTransferFunds(Customer customer, Customer beneficiary, double amount)
+        public Boolean IFTransactionExists(Bank bank, string transactionID)
         {
-            customer.TotalAmmount -= amount;
-            customer.TransactionList.Add(new Transactions(customer.UserName, beneficiary.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, beneficiary.BankName, TransactionTypes.TransferDebit));
-            beneficiary.TotalAmmount += amount;
-            beneficiary.TransactionList.Add(new Transactions(customer.UserName, beneficiary.UserName, amount, Bank.BankID, customer.AccountID, customer.BankName, beneficiary.BankName, TransactionTypes.TransferCredit));
-        }
-
-        public Boolean IFTransactionExists(string transactionID)
-        {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
                 if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
+                    foreach (Transaction transaction in customer.TransactionList)
                     {
-                        if (transaction.TransactionID.Equals(transactionID))
+                        if (transaction.ID.Equals(transactionID))
                         {
                             return true;
                         }
@@ -208,33 +221,29 @@ namespace InternshipTaskBankManagement
             return false;
         }
 
-        public Transactions GetTransaction(string transactionID)
+        public Transaction GetTransaction(Customer customer, string transactionID)
         {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Transaction transaction in customer.TransactionList)
             {
-                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                if (transaction.ID.Equals(transactionID))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
-                    {
-                        if (transaction.TransactionID.Equals(transactionID))
-                        {
-                            return transaction;
-                        }
-                    }
+                    return transaction;
                 }
             }
+
+
             return null;
         }
 
-        public string GetSenderUsername(string transactionID)
+        public string GetSenderUsername(Bank bank, string transactionID)
         {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
                 if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
+                    foreach (Transaction transaction in customer.TransactionList)
                     {
-                        if (transaction.TransactionID.Equals(transactionID))
+                        if (transaction.ID.Equals(transactionID))
                         {
                             return transaction.Sender;
                         }
@@ -244,15 +253,15 @@ namespace InternshipTaskBankManagement
             return null;
         }
 
-        public string GetSenderBankName(string transactionID)
+        public string GetSenderBankName(Bank bank, string transactionID)
         {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
                 if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
+                    foreach (Transaction transaction in customer.TransactionList)
                     {
-                        if (transaction.TransactionID.Equals(transactionID))
+                        if (transaction.ID.Equals(transactionID))
                         {
                             return transaction.SenderBankName;
                         }
@@ -264,15 +273,15 @@ namespace InternshipTaskBankManagement
 
 
 
-        public string GetBeneficiaryUsername(string transactionID)
+        public string GetBeneficiaryUsername(Bank bank, string transactionID)
         {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
                 if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
+                    foreach (Transaction transaction in customer.TransactionList)
                     {
-                        if (transaction.TransactionID.Equals(transactionID))
+                        if (transaction.ID.Equals(transactionID))
                         {
                             return transaction.Beneficiary;
                         }
@@ -281,15 +290,15 @@ namespace InternshipTaskBankManagement
             }
             return null;
         }
-        public string GetBeneficiaryBankName(string transactionID)
+        public string GetBeneficiaryBankName(Bank bank, string transactionID)
         {
-            foreach (Customer customer in Bank.AccountsList)
+            foreach (Customer customer in bank.AccountsList)
             {
                 if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transactions transaction in customer.TransactionList)
+                    foreach (Transaction transaction in customer.TransactionList)
                     {
-                        if (transaction.TransactionID.Equals(transactionID))
+                        if (transaction.ID.Equals(transactionID))
                         {
                             return transaction.BeneficiaryBankName;
                         }
@@ -298,18 +307,27 @@ namespace InternshipTaskBankManagement
             }
             return null;
         }
-        public void RevertTransaction(Customer customer, string transactionID)
+        public void RevertTransaction(Customer customer, Customer beneficiary, Transaction debitTransaction, Transaction creditTrasactions)
         {
-            foreach (Transactions transaction in customer.TransactionList)
+            customer.TotalAmmount += debitTransaction.Amount;
+            customer.TransactionList.Remove(debitTransaction);
+            beneficiary.TotalAmmount -= creditTrasactions.Amount;
+            beneficiary.TransactionList.Remove(creditTrasactions);
+        }
+
+        public void RevertTransaction(Customer customer, Transaction transaction)
+        {
+            if (transaction.TransactionType == TransactionTypes.Withdrawl)
             {
-                if (transaction.TransactionID.Equals(transactionID))
-                {
-                    customer.TotalAmmount -= transaction.CreditAmount;
-                    customer.TotalAmmount += transaction.DebitAmount;
-                    customer.TransactionList.Remove(transaction);
-                    break;
-                }
+                customer.TotalAmmount += transaction.Amount;
+                customer.TransactionList.Remove(transaction);
+            }
+            else if (transaction.TransactionType == TransactionTypes.Deposit)
+            {
+                customer.TotalAmmount -= transaction.Amount;
+                customer.TransactionList.Remove(transaction);
             }
         }
+
     }
 }

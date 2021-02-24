@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace InternshipTaskBankManagement
+namespace Bank
 {
     public enum FirstMenu
     {
-        SetupNewBank = 1, OpenExistingBank = 2
+        SetupNewBank = 1, OpenExistingBank = 2, Save = 3
     }
 
     public enum SecondMenu
@@ -47,7 +47,7 @@ namespace InternshipTaskBankManagement
         RTGS = 1, IMPS = 2
     }
 
-    public enum BankOptions
+    public enum FundTransferOptions
     {
         SameBankRTGS = 1,
         SameBankIMPS = 2,

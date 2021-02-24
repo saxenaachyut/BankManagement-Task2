@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace InternshipTaskBankManagement
+namespace Bank
 {
     public class Bank
     {
         public string Name { get; set; }
-        public string BankID { get; set; }
+        public string ID { get; set; }
         public double SameBankRTGS { get; set; }
         public double SameBankIMPS { get; set; }
         public double OtherBankRTGS { get; set; }
@@ -15,21 +15,9 @@ namespace InternshipTaskBankManagement
         public Currency DefaultCurrency { get; set; }
 
 
-        public List<User> AccountsList;
+        public List<Customer> AccountsList;
+        public List<BankStaff> StaffList;
         public List<Currency> CurrenyList;
-
-        public Bank(string bankName)
-        {
-            this.Name = bankName;
-            this.BankID = this.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-            this.AccountsList = new List<User>();
-            this.CurrenyList = new List<Currency>();
-            this.SameBankRTGS = 0;
-            this.SameBankIMPS = 5;
-            this.OtherBankRTGS = 2;
-            this.OtherBankIMPS = 6;
-            this.CurrenyList.Add(this.DefaultCurrency = new Currency("Indian National Rupee", "INR", 0));
-        }
 
     }
 }
