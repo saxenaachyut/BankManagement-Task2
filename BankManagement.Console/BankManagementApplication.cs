@@ -405,7 +405,7 @@ namespace Bank
             while (!(confirmatiom = Utilities.GetUserInput()).Equals("Y"))
             {
                 Console.WriteLine("Enter Y or N");
-                if(confirmatiom.Equals("N"))
+                if( confirmatiom.Equals("N") )
                 {
                     Console.Clear();
                     return;
