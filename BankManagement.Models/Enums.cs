@@ -4,18 +4,18 @@ using System.Text;
 
 namespace Bank
 {
-    public enum FirstMenu
+    public enum MainMenuOptions
     {
         SetupNewBank = 1, OpenExistingBank = 2, Save = 3
     }
 
-    public enum SecondMenu
+    public enum BankMenuOptions
     {
         LoginBankStaff = 1, LoginCustomer = 2, GoBack = 3
 
     }
 
-    public enum BankStaffMenu
+    public enum StaffMenuOptions
     {
         CreateNewCustomerAccount = 1,
         UpdateCustomerAccount = 2,

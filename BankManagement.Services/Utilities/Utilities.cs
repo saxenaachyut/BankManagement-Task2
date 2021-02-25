@@ -6,7 +6,7 @@ namespace Bank
 {
     public static class Utilities
     {
-        public static FirstMenu GetStartMenuOption()
+        public static MainMenuOptions GetStartMenuOption()
         {
             int integerInput;
             while ( !int.TryParse(Console.ReadLine(), out integerInput) )
@@ -14,10 +14,10 @@ namespace Bank
                 Console.WriteLine("Enter Valid option :");
             }
 
-            return (FirstMenu)integerInput;
+            return (MainMenuOptions)integerInput;
         }
 
-        public static SecondMenu GetBankMenuOption()
+        public static BankMenuOptions GetBankMenuOption()
         {
             int integerInput;
             while (!int.TryParse(Console.ReadLine(), out integerInput))
@@ -25,10 +25,10 @@ namespace Bank
                 Console.WriteLine("Enter Valid option :");
             }
 
-            return (SecondMenu)integerInput;
+            return (BankMenuOptions)integerInput;
         }
 
-        public static BankStaffMenu GetStaffMenuOption()
+        public static StaffMenuOptions GetStaffMenuOption()
         {
             int integerInput;
             while (!int.TryParse(Console.ReadLine(), out integerInput))
@@ -36,7 +36,7 @@ namespace Bank
                 Console.WriteLine("Enter Valid option :");
             }
 
-            return (BankStaffMenu)integerInput;
+            return (StaffMenuOptions)integerInput;
         }
 
         public static CustomerMenuOptions GetCustomerMenuOption()
@@ -83,7 +83,7 @@ namespace Bank
             return amount;
         }
 
-        public static string GetUserInput()
+        public static string GetStringInput()
         {
             string userInput = Console.ReadLine();
 
