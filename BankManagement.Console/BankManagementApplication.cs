@@ -42,7 +42,13 @@ namespace Bank
                         //Console.Clear();
                         Console.WriteLine("Enter password for Admin Account");
                         BankStaff admin = new BankStaff();
-                        BankService.SetupNewBankStaff(admin, "Admin", "Admin", Utilities.GetStringInput());
+                        Console.WriteLine("Enter name for Admin account :");
+                        string name = Utilities.GetStringInput();
+                        Console.WriteLine("Enter Username for Admin account :");
+                        string username = Utilities.GetStringInput();
+                        Console.WriteLine("Enter password for Admin Account");
+                        string password = Utilities.GetStringInput();
+                        BankService.SetupNewBankStaff(admin, name, username, password);
                         BankService.AddBankStaff(bank, admin);
                         Console.WriteLine("Bank Successfull created and added \n" +
                             "Press any key to continue...");
