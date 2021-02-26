@@ -34,28 +34,30 @@ namespace Bank
 
         public AccountHolder GetCustomer(Bank bank, string username)
         {
-            foreach (AccountHolder customer in bank.AccountsList)
+            try
             {
-                if (username.Equals(customer.UserName))
-                {
-                    return customer;
-                }
+                AccountHolder accountHolder = bank.AccountsList.Find(b => b.UserName == username);
+                return accountHolder;
             }
 
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
-        public AccountHolder GetCustomerThroughID(Bank bank, string username)
+        public AccountHolder GetCustomerThroughID(Bank bank, string accountID)
         {
-            foreach (AccountHolder customer in bank.AccountsList)
+            try
             {
-                if (username.Equals(customer.AccountID))
-                {
-                    return customer;
-                }
+                AccountHolder accountHolder = bank.AccountsList.Find(b => b.AccountID == accountID);
+                return accountHolder;
             }
 
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public void RemoveCustomer(Bank bank, string username)

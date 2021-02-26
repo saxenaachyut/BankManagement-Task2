@@ -34,29 +34,31 @@ namespace Bank
 
         public Bank GetBank(List<Bank> bankList, string bankName)
         {
-            foreach (Bank bank in bankList)
+            try
             {
-                if (bank.Name.Equals(bankName))
-                {
-                    return bank;
-                }
+                Bank bank = bankList.Find(b => b.Name == bankName);
+                return bank;
             }
 
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
 
         }
 
-        public Bank GetBankThroughID(List<Bank> bankList, string bankName)
+        public Bank GetBankThroughID(List<Bank> bankList, string bankID)
         {
-            foreach (Bank bank in bankList)
+            try
             {
-                if (bank.ID.Equals(bankName))
-                {
-                    return bank;
-                }
+                Bank bank = bankList.Find(b => b.ID == bankID);
+                return bank;
             }
 
-            return null;
+            catch (Exception)
+            {
+                return null;
+            }
 
         }
 
