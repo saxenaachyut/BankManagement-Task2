@@ -25,10 +25,6 @@ namespace Bank
             this.StaffList = new List<BankStaff>();
             this.CurrenyList = new List<Currency>();
             Currency defaultCurrency = new Currency();
-            defaultCurrency.CurrencyCode = "INR";
-            defaultCurrency.Name = "Indian National Rupee";
-            defaultCurrency.ExcahngeRate = 0;
-            this.CurrenyList.Add(defaultCurrency);
         }
 
     }

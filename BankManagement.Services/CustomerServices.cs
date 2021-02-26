@@ -6,7 +6,8 @@ namespace Bank
 {
     public class CustomerServices
     {
-        public Boolean CheckIfCustomerExists(Bank bank, string Username)
+
+        public bool IsCustomerExists(Bank bank, string Username)
         {
             foreach (var customer in bank.AccountsList)
             {
@@ -18,19 +19,17 @@ namespace Bank
             return false;
         }
 
-        public void SetupNewCustomer(Bank bank, AccountHolder customer, string name, string username, string password)
+        public bool AddCustomer(Bank bank, AccountHolder customer)
         {
-            customer.Name = name;
-            customer.UserName = username;
-            customer.Password = password;
-            customer.AccountID = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-            customer.AccountBalance = 0;
-            customer.BankName = bank.Name;
-        }
-
-        public void AddCustomer(Bank bank, AccountHolder customer)
-        {
-            bank.AccountsList.Add(customer);
+            try
+            {
+                bank.AccountsList.Add(customer);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public AccountHolder GetCustomer(Bank bank, string username)
@@ -46,12 +45,25 @@ namespace Bank
             return null;
         }
 
+        public AccountHolder GetCustomerThroughID(Bank bank, string username)
+        {
+            foreach (AccountHolder customer in bank.AccountsList)
+            {
+                if (username.Equals(customer.AccountID))
+                {
+                    return customer;
+                }
+            }
+
+            return null;
+        }
+
         public void RemoveCustomer(Bank bank, string username)
         {
             bank.AccountsList.Remove(GetCustomer(bank, username));
         }
 
-        public double GetTotalAccountBalance(AccountHolder customer)
+        public double GetAccountBalance(AccountHolder customer)
         {
             return customer.AccountBalance;
         }

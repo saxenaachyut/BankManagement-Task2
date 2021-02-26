@@ -4,9 +4,8 @@ using System.Text;
 
 namespace Bank
 {
-    public class BankStaff : User
+    public static class BankStore
     {
-        public string AccountID { get; set; }
-
+        public static List<Bank> Banks = new List<Bank>();
     }
 }

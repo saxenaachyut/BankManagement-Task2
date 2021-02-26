@@ -6,16 +6,7 @@ namespace Bank
 {
     public class BankServices
     {
-
-        public void SetupNewBankStaff(BankStaff bankStaff, string name, string username, string password)
-        {
-            bankStaff.Name = name;
-            bankStaff.UserName = username;
-            bankStaff.Password = password;
-            bankStaff.AccountID = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-        }
-
-        public Boolean CheckIfBankExists(List<Bank> bankList, string bankName)
+        public bool IsBankExists(List<Bank> bankList, string bankName)
         {
             foreach (Bank bank in bankList)
             {
@@ -28,19 +19,17 @@ namespace Bank
             return false;
         }
 
-        public void AddBank(List<Bank> bankList, Bank bank, string bankName)
+        public bool AddBank(List<Bank> bankList, Bank bank)
         {
-            bank.Name = bankName;
-            bank.ID = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-            bank.AccountsList = new List<AccountHolder>();
-            bank.StaffList = new List<BankStaff>();
-            bank.CurrenyList = new List<Currency>();
-            bank.SameBankRTGS = 0;
-            bank.SameBankIMPS = 5;
-            bank.OtherBankRTGS = 2;
-            bank.OtherBankIMPS = 6;
-
-            bankList.Add(bank);
+            try
+            {
+                bankList.Add(bank);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public Bank GetBank(List<Bank> bankList, string bankName)
@@ -57,7 +46,21 @@ namespace Bank
 
         }
 
-        public Boolean CheckIfStaffExists(Bank bank, string Username)
+        public Bank GetBankThroughID(List<Bank> bankList, string bankName)
+        {
+            foreach (Bank bank in bankList)
+            {
+                if (bank.ID.Equals(bankName))
+                {
+                    return bank;
+                }
+            }
+
+            return null;
+
+        }
+
+        public Boolean IsStaffExists(Bank bank, string Username)
         {
             foreach (var staff in bank.StaffList)
             {
@@ -87,7 +90,7 @@ namespace Bank
             return null;
         }
 
-        public Boolean CheckIfCurrencyExists(Bank bank, string currencyCode)
+        public Boolean IsCurrencyExists(Bank bank, string currencyCode)
         {
             foreach (var currencyCodeittr in bank.CurrenyList)
             {

@@ -6,85 +6,34 @@ namespace Bank
 {
     public static class Utilities
     {
-        public static MainMenuOptions GetStartMenuOption()
+        public static int GetIntInput(string text)
         {
-            int integerInput;
-            while ( !int.TryParse(Console.ReadLine(), out integerInput) )
-            {
-                Console.WriteLine("Enter Valid option :");
-            }
-
-            return (MainMenuOptions)integerInput;
-        }
-
-        public static BankMenuOptions GetBankMenuOption()
-        {
+            Console.WriteLine(text + " :");
             int integerInput;
             while (!int.TryParse(Console.ReadLine(), out integerInput))
             {
                 Console.WriteLine("Enter Valid option :");
             }
 
-            return (BankMenuOptions)integerInput;
+            return integerInput;
+
         }
 
-        public static StaffMenuOptions GetStaffMenuOption()
-        {
-            int integerInput;
-            while (!int.TryParse(Console.ReadLine(), out integerInput))
-            {
-                Console.WriteLine("Enter Valid option :");
-            }
-
-            return (StaffMenuOptions)integerInput;
-        }
-
-        public static CustomerMenuOptions GetCustomerMenuOption()
-        {
-            int integerInput;
-            while (!int.TryParse(Console.ReadLine(), out integerInput))
-            {
-                Console.WriteLine("Enter Valid option :");
-            }
-
-            return (CustomerMenuOptions)integerInput;
-        }
-
-        public static FundTransferOptions GetTransferFundsMenuOption()
-        {
-            int integerInput;
-            while (!int.TryParse(Console.ReadLine(), out integerInput))
-            {
-                Console.WriteLine("Enter Valid option :");
-            }
-
-            return (FundTransferOptions )integerInput;
-        }
-
-        public static double GetExchangeRateFromUser()
+        public static double GetDoubleInput(string text, string textIfFail)
         {
             double exchangeRate;
+            Console.WriteLine(text + " :");
             while (!double.TryParse(Console.ReadLine(), out exchangeRate))
             {
-                Console.WriteLine("Only numbers are acccepted, Enter valid Rate again :");
+                Console.WriteLine(textIfFail + " :");
             }
 
             return exchangeRate;
         }
 
-        public static double GetAmount()
+        public static string GetStringInput(string text)
         {
-            double amount;
-            while (!double.TryParse(Console.ReadLine(), out amount))
-            {
-                Console.WriteLine("Only Numbers Accepted, Enter Amount again :");
-            }
-
-            return amount;
-        }
-
-        public static string GetStringInput()
-        {
+            Console.WriteLine(text + " :");
             string userInput = Console.ReadLine();
 
             return userInput;

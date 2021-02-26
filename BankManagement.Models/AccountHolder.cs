@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Bank
 {
@@ -9,6 +8,7 @@ namespace Bank
         public string BankName { get; set; }
         public string AccountID { get; set; }
         public double AccountBalance { get; set; }
+        public string BankID { get; set; }
         public List<Transaction> TransactionList {get; set;}
 
         public AccountHolder()

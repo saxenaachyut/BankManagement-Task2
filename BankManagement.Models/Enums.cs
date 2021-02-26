@@ -1,53 +1,58 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;       
 
 namespace Bank
 {
-    public enum MainMenuOptions
+    public enum MainMenuOption
     {
-        SetupNewBank = 1, OpenExistingBank = 2, Save = 3
+        CreateNewBank = 1, 
+        LogintoExistingBank = 2, 
+        Exit = 3
     }
 
-    public enum BankMenuOptions
+    public enum BankMenuOption
     {
-        LoginBankStaff = 1, LoginCustomer = 2, GoBack = 3
+        Login = 1, 
+        GoBack = 2
 
     }
 
-    public enum StaffMenuOptions
+    public enum StaffMenuOption
     {
         CreateNewCustomerAccount = 1,
         UpdateCustomerAccount = 2,
         DeleteCustomerAccount = 3,
         AddNewCurrency = 4,
-        ModifyServiceChargeSameBank = 5,
-        ModifyServiceChargeOtherBank = 6,
-        ViewTransactionHistory = 7,
+        UpdateServiceChargeSameBank = 5,
+        UpdateServiceChargeOtherBank = 6,
+        TransactionHistory = 7,
         RevertTransaction = 8,
         Logout = 9
     }
 
-    public enum CustomerMenuOptions
+    public enum CustomerMenuOption
     {
         Deposit = 1,
         Withdraw = 2,
         Transfer = 3,
-        ViewTransactionHistory = 4,
+        TransactionHistory = 4,
         Logout = 5
     }
 
-    public enum TransactionTypes
+    public enum TransactionType
     {
-        Deposit = 1, Withdrawl = 2, TransferDebit = 3, TransferCredit
+        Deposit = 1, 
+        Withdrawl = 2, 
+        TransferDebit = 3, 
+        TransferCredit = 4
     }
 
     public enum ServiceCharges
     {
-        RTGS = 1, IMPS = 2
+        RTGS = 1, 
+        IMPS = 2
     }
 
-    public enum FundTransferOptions
+    public enum FundTransferOption
     {
         SameBankRTGS = 1,
         SameBankIMPS = 2,

@@ -7,56 +7,54 @@ namespace Bank
     public class TransactionServices
     {
 
-        public void SetupNewTransaction(Transaction transaction, string senderAccountID, double amount, string bankID, string accountID, string senderBankName, TransactionTypes transationType)
+        public void SetupNewTransaction(Transaction transaction, string senderAccountID, double amount, string bankID, string accountID, TransactionType transationType)
         {
-            transaction.SourceAccount = senderAccountID;
-            transaction.DestinationAccount = senderAccountID;
-            transaction.BankID = bankID;
+            transaction.SrcAccountID = senderAccountID;
+            transaction.DestAccountID = senderAccountID;
+            transaction.SrcBankID = bankID;
             transaction.TransactionDate = DateTime.Now.ToString("f");
             transaction.ID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
-            transaction.SourceAccountBankName = senderBankName;
-            transaction.DestinationAccountBankName = senderBankName;
+            transaction.DestBankID = bankID;
             transaction.Amount = amount;
 
-            if (transationType == TransactionTypes.Deposit)
+            if (transationType == TransactionType.Deposit)
             {
-                transaction.TransactionType = TransactionTypes.Deposit;
+                transaction.TransactionType = TransactionType.Deposit;
             }
-            else if (transationType == TransactionTypes.Withdrawl)
+            else if (transationType == TransactionType.Withdrawl)
             {
-                transaction.TransactionType = TransactionTypes.Withdrawl;
+                transaction.TransactionType = TransactionType.Withdrawl;
             }
         }
 
-        public void SetupNewTransaction(Transaction transaction, string senderAccountID, string destinationAccountID, double amount, string bankID, string accountID, string senderBankName, string beneficiaryBankName, TransactionTypes transationType)
+        public void SetupNewTransaction(Transaction transaction, string senderAccountID, string destinationAccountID, double amount, string bankID, string accountID, string destBankID, TransactionType transationType)
         {
-            transaction.SourceAccount = senderAccountID;
-            transaction.DestinationAccount = destinationAccountID;
-            transaction.BankID = bankID;
-            transaction.SourceAccountBankName = senderBankName;
-            transaction.DestinationAccountBankName = beneficiaryBankName;
+            transaction.SrcAccountID = senderAccountID;
+            transaction.DestAccountID = destinationAccountID;
+            transaction.SrcBankID = bankID;
+            transaction.DestBankID = destBankID;
             transaction.ID = "TXN" + bankID + accountID + DateTime.Now.ToString("ddMMyyyy");
             transaction.TransactionDate = DateTime.Now.ToString("f");
             transaction.Amount = amount;
 
-            if (transationType == TransactionTypes.TransferDebit)
+            if (transationType == TransactionType.TransferDebit)
             {
-                transaction.TransactionType = TransactionTypes.TransferDebit;
+                transaction.TransactionType = TransactionType.TransferDebit;
 
             }
-            else if (transationType == TransactionTypes.TransferCredit)
+            else if (transationType == TransactionType.TransferCredit)
             {
-                transaction.TransactionType = TransactionTypes.TransferCredit;
+                transaction.TransactionType = TransactionType.TransferCredit;
             }
         }
 
-        public Boolean CheckIfTransactionExists(Bank bank, string transactionID)
+        public Boolean IsTransactionExists(Bank bank, string transactionID)
         {
-            foreach (AccountHolder customer in bank.AccountsList)
+            foreach (AccountHolder accountHolder in bank.AccountsList)
             {
-                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                if (accountHolder.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transaction transaction in customer.TransactionList)
+                    foreach (Transaction transaction in accountHolder.TransactionList)
                     {
                         if (transaction.ID.Equals(transactionID))
                         {
@@ -68,23 +66,23 @@ namespace Bank
             return false;
         }
 
-        public double GetTrasferAmount(Bank bank, FundTransferOptions bankOption, double amount)
+        public double GetTrasferAmount(Bank bank, FundTransferOption bankOption, double amount)
         {
             double totaltrasferamount = 0;
 
-            if (bankOption == FundTransferOptions.SameBankRTGS)
+            if (bankOption == FundTransferOption.SameBankRTGS)
             {
                 totaltrasferamount = amount + amount * (bank.SameBankRTGS / 100);
             }
-            else if (bankOption == FundTransferOptions.SameBankIMPS)
+            else if (bankOption == FundTransferOption.SameBankIMPS)
             {
                 totaltrasferamount = amount + amount * (bank.SameBankIMPS / 100);
             }
-            else if (bankOption == FundTransferOptions.OtherBankRTGS)
+            else if (bankOption == FundTransferOption.OtherBankRTGS)
             {
                 totaltrasferamount = amount + amount * (bank.OtherBankRTGS / 100);
             }
-            else if (bankOption == FundTransferOptions.OtherBankIMPS)
+            else if (bankOption == FundTransferOption.OtherBankIMPS)
             {
                 totaltrasferamount = amount + amount * (bank.OtherBankIMPS / 100);
             }
@@ -92,9 +90,9 @@ namespace Bank
             return totaltrasferamount;
         }
 
-        public Transaction GetTransaction(AccountHolder customer, string transactionID)
+        public Transaction GetTransaction(AccountHolder accountHolder, string transactionID)
         {
-            foreach (Transaction transaction in customer.TransactionList)
+            foreach (Transaction transaction in accountHolder.TransactionList)
             {
                 if (transaction.ID.Equals(transactionID))
                 {
@@ -105,98 +103,78 @@ namespace Bank
             return null;
         }
 
-        public void DepositAmount(AccountHolder customer, Transaction transaction)
+        public void DepositAmount(AccountHolder accountHolder, Transaction transaction)
         {
-            customer.TransactionList.Add(transaction);
-            customer.AccountBalance += transaction.Amount;
+            accountHolder.TransactionList.Add(transaction);
+            accountHolder.AccountBalance += transaction.Amount;
         }
 
-        public Boolean CheckIfSufficientFundsAvailable(AccountHolder customer, double amount)
+        public Boolean IsSufficientFundsAvailable(AccountHolder accountHolder, double amount)
         {
-            if (customer.AccountBalance > amount)
+            if (accountHolder.AccountBalance > amount)
                 return true;
             else
                 return false;
         }
 
-        public void WithdrawAmount(AccountHolder customer, Transaction transaction)
+        public void WithdrawAmount(AccountHolder accountHolder, Transaction transaction)
         {
-            if (CheckIfSufficientFundsAvailable(customer, transaction.Amount))
+            if (IsSufficientFundsAvailable(accountHolder, transaction.Amount))
             {
-                customer.TransactionList.Add(transaction);
-                customer.AccountBalance -= transaction.Amount;
+                accountHolder.TransactionList.Add(transaction);
+                accountHolder.AccountBalance -= transaction.Amount;
             }
             else
                 return;
         }
 
-        public void TransferFunds(AccountHolder customer, AccountHolder beneficiary, Transaction debitTransaction, Transaction creditTransaction)
+        public void TransferFunds(AccountHolder sender, AccountHolder beneficiary, Transaction debitTransaction, Transaction creditTransaction)
         {
-            customer.AccountBalance -= debitTransaction.Amount;
-            customer.TransactionList.Add(debitTransaction);
+            sender.AccountBalance -= debitTransaction.Amount;
+            sender.TransactionList.Add(debitTransaction);
             beneficiary.AccountBalance += creditTransaction.Amount;
             beneficiary.TransactionList.Add(creditTransaction);
         }
 
-        public void RevertTransaction(AccountHolder customer, AccountHolder beneficiary, Transaction debitTransaction, Transaction creditTrasactions)
+        public void RevertTransaction(AccountHolder sender, AccountHolder beneficiary, Transaction debitTransaction, Transaction creditTrasactions)
         {
-            customer.AccountBalance += debitTransaction.Amount;
-            customer.TransactionList.Remove(debitTransaction);
+            sender.AccountBalance += debitTransaction.Amount;
+            sender.TransactionList.Remove(debitTransaction);
             beneficiary.AccountBalance -= creditTrasactions.Amount;
             beneficiary.TransactionList.Remove(creditTrasactions);
         }
 
-        public void RevertTransaction(AccountHolder customer, Transaction transaction)
+        public void RevertTransaction(AccountHolder accountHolder, Transaction transaction)
         {
-            if (transaction.TransactionType == TransactionTypes.Withdrawl)
+            if (transaction.TransactionType == TransactionType.Withdrawl)
             {
-                customer.AccountBalance += transaction.Amount;
-                customer.TransactionList.Remove(transaction);
+                accountHolder.AccountBalance += transaction.Amount;
+                accountHolder.TransactionList.Remove(transaction);
             }
-            else if (transaction.TransactionType == TransactionTypes.Deposit)
+            else if (transaction.TransactionType == TransactionType.Deposit)
             {
-                customer.AccountBalance -= transaction.Amount;
-                customer.TransactionList.Remove(transaction);
+                accountHolder.AccountBalance -= transaction.Amount;
+                accountHolder.TransactionList.Remove(transaction);
             }
         }
 
         public string GetSenderUsername(Bank bank, string transactionID)
         {
-            foreach (AccountHolder customer in bank.AccountsList)
+            foreach (AccountHolder accountHolder in bank.AccountsList)
             {
-                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                if (accountHolder.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transaction transaction in customer.TransactionList)
+                    foreach (Transaction transaction in accountHolder.TransactionList)
                     {
                         if (transaction.ID.Equals(transactionID))
                         {
-                            return transaction.SourceAccount;
+                            return transaction.SrcAccountID;
                         }
                     }
                 }
             }
             return null;
         }
-
-        public string GetSenderBankName(Bank bank, string transactionID)
-        {
-            foreach (AccountHolder customer in bank.AccountsList)
-            {
-                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
-                {
-                    foreach (Transaction transaction in customer.TransactionList)
-                    {
-                        if (transaction.ID.Equals(transactionID))
-                        {
-                            return transaction.SourceAccountBankName;
-                        }
-                    }
-                }
-            }
-            return null;
-        }
-
-
 
         public string GetBeneficiaryUsername(Bank bank, string transactionID)
         {
@@ -208,24 +186,43 @@ namespace Bank
                     {
                         if (transaction.ID.Equals(transactionID))
                         {
-                            return transaction.DestinationAccount;
+                            return transaction.DestAccountID;
                         }
                     }
                 }
             }
             return null;
         }
-        public string GetBeneficiaryBankName(Bank bank, string transactionID)
+
+        public string GetSrcBankID(Bank bank, string transactionID)
         {
-            foreach (AccountHolder customer in bank.AccountsList)
+            foreach (AccountHolder accountHolder in bank.AccountsList)
             {
-                if (customer.AccountID.Equals(transactionID.Substring(14, 11)))
+                if (accountHolder.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transaction transaction in customer.TransactionList)
+                    foreach (Transaction transaction in accountHolder.TransactionList)
                     {
                         if (transaction.ID.Equals(transactionID))
                         {
-                            return transaction.DestinationAccountBankName;
+                            return transaction.SrcBankID;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        public string GetDestBankID(Bank bank, string transactionID)
+        {
+            foreach (AccountHolder accountHolder in bank.AccountsList)
+            {
+                if (accountHolder.AccountID.Equals(transactionID.Substring(14, 11)))
+                {
+                    foreach (Transaction transaction in accountHolder.TransactionList)
+                    {
+                        if (transaction.ID.Equals(transactionID))
+                        {
+                            return transaction.DestBankID;
                         }
                     }
                 }
