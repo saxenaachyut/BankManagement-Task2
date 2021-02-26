@@ -24,14 +24,14 @@ namespace Bank
                 "---------------------------------------------------------\n" +
                 "1. Setup a new Bank\n" +
                 "2. Login to Existing Bank\n" +
-                "3. Save");
+                "3. Exit");
 
-            MainMenuOption menuOption = (MainMenuOption)Utilities.GetIntInput("");
+            MainMenuOption menuOption = (MainMenuOption)Utilities.GetIntInput();
             switch (menuOption)
             {
                 case MainMenuOption.CreateNewBank:
                     Console.Clear();
-                    string bankName = Utilities.GetStringInput("Enter Bank Name");
+                    string bankName = Utilities.GetStringInput("Enter Bank Name :");
                     if (!BankService.IsBankExists(BankStore.Banks, bankName))
                     {
                         Bank bank = new Bank();
@@ -56,9 +56,9 @@ namespace Bank
                         }
 
                         BankStaff admin = new BankStaff();
-                        admin.Name = Utilities.GetStringInput("Enter name for Admin account"); ;
-                        admin.UserName = Utilities.GetStringInput("Enter Username for Admin account"); ;
-                        admin.Password = Utilities.GetStringInput("Enter password for Admin Account");
+                        admin.Name = Utilities.GetStringInput("Enter name for Admin account :"); ;
+                        admin.UserName = Utilities.GetStringInput("Enter Username for Admin account :"); ;
+                        admin.Password = Utilities.GetStringInput("Enter password for Admin Account :");
                         admin.AccountID = admin.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                         BankService.AddBankStaff(bank, admin);
 
@@ -72,27 +72,30 @@ namespace Bank
                         Console.WriteLine("Bank already exists\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
+                        Console.Clear();
                     }
                     MainMenu();
                     break;
 
                 case MainMenuOption.LogintoExistingBank:
                     Console.Clear();
-                    bankName = Utilities.GetStringInput("Enter Bank Name");
+                    bankName = Utilities.GetStringInput("Enter Bank Name :");
                     if (BankService.IsBankExists(BankStore.Banks, bankName))
                     {
                         Login(BankService.GetBank(BankStore.Banks, bankName));
                     }
                     else
                     {
-                        Console.WriteLine("Bank does not exists");
+                        Console.WriteLine("Bank does not exists" +
+                            "Press any key to continue...");
+                        Console.ReadKey();
+                        Console.Clear();
                         MainMenu();
                     }
                     break;
 
                 case MainMenuOption.Exit:
-                    MainMenu();
-                    break;
+                    return; 
 
                 default:
                     Console.WriteLine("Invalid Selection");
@@ -109,7 +112,7 @@ namespace Bank
                 "1. Login\n" +
                 "2. Go Back");
 
-            BankMenuOption menuOption = (BankMenuOption)Utilities.GetIntInput("");
+            BankMenuOption menuOption = (BankMenuOption)Utilities.GetIntInput();
 
             switch (menuOption)
             {
@@ -119,7 +122,7 @@ namespace Bank
                     if (BankService.IsStaffExists(bank, username))
                     {
                         BankStaff bankStaff = BankService.GetBankStaff(bank, username);
-                        while (!bankStaff.Password.Equals(Utilities.GetStringInput("Enter Password")))
+                        while (!bankStaff.Password.Equals(Utilities.GetStringInput("Enter Password :")))
                         {
                             Console.WriteLine("Incorrect Password Entered, Enter again : ");
                         }
@@ -129,7 +132,7 @@ namespace Bank
                     else if(CustomerService.IsCustomerExists(bank, username))
                     {
                         AccountHolder customer = CustomerService.GetCustomer(bank, username);
-                        while (!customer.Password.Equals(Utilities.GetStringInput("Enter Password")))
+                        while (!customer.Password.Equals(Utilities.GetStringInput("Enter Password :")))
                         {
                             Console.WriteLine("Incorrect Password Entered, Enter again : ");
                         }
@@ -174,7 +177,7 @@ namespace Bank
                 "8. Revert a Transaction\n" +
                 "9. Logout");
 
-            StaffMenuOption menuOption = (StaffMenuOption)Utilities.GetIntInput("");
+            StaffMenuOption menuOption = (StaffMenuOption)Utilities.GetIntInput();
 
             switch (menuOption)
             {
@@ -247,7 +250,7 @@ namespace Bank
                 "4. Transaction History\n" +
                 "5. Logout");
 
-            CustomerMenuOption menuOption = (CustomerMenuOption)Utilities.GetIntInput("");
+            CustomerMenuOption menuOption = (CustomerMenuOption)Utilities.GetIntInput();
 
             switch (menuOption)
             {
@@ -294,7 +297,7 @@ namespace Bank
         {
             string name, username;
             name = Utilities.GetStringInput("Enter Name");
-            while (CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username")))
+            while (CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User already exist enter a new Username or 0 to exit : ");
                 if (username.Equals("0"))
@@ -306,13 +309,13 @@ namespace Bank
             AccountHolder customer = new AccountHolder();
             customer.Name = name;
             customer.UserName = username;
-            customer.Password = Utilities.GetStringInput("Enter Password");
-            customer.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number");
+            customer.Password = Utilities.GetStringInput("Enter Password :");
+            customer.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
             customer.AccountID = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
             customer.AccountBalance = 0;
             customer.BankID = bank.ID;
 
-            if(CustomerService.AddCustomer(bank, customer))
+            if(!CustomerService.AddCustomer(bank, customer))
             {
                 Console.WriteLine("Failed to add Customer" +
                     "Press any key to continue...");
@@ -333,7 +336,7 @@ namespace Bank
         public static void UpdateCustomerAccount(Bank bank)
         {
             string username;
-            while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username")))
+            while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -343,7 +346,7 @@ namespace Bank
                 }
             }
 
-            CustomerService.GetCustomer(bank,username).Password = Utilities.GetStringInput("Enter New Password");
+            CustomerService.GetCustomer(bank,username).Password = Utilities.GetStringInput("Enter New Password :");
 
             Console.WriteLine("Password Updated Successfully\n" +
                 "Press any key to continue...");
@@ -355,7 +358,7 @@ namespace Bank
         public static void DeleteCustomerAccount(Bank bank)
         {
             string username;
-           while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username")))
+           while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -388,7 +391,7 @@ namespace Bank
         {
             string currencyCode, currencyName;
             double exchangeRate;
-            while ( BankService.IsCurrencyExists(bank, currencyCode = Utilities.GetStringInput("Enter Currency Code")) )
+            while ( BankService.IsCurrencyExists(bank, currencyCode = Utilities.GetStringInput("Enter Currency Code :")) )
             {
                 Console.WriteLine("Currency already Exists, Enter a new Currency Code or 0 to exit :");
                 if (currencyCode.Equals("0"))
@@ -398,7 +401,7 @@ namespace Bank
                 }
             }
 
-            currencyName = Utilities.GetStringInput("Enter Currency Name");
+            currencyName = Utilities.GetStringInput("Enter Currency Name :");
             exchangeRate = Utilities.GetDoubleInput("Enter Exchange Rate", "Only numbers are acccepted, Enter valid Rate again");
 
             Currency newCurrency = new Currency();
@@ -535,7 +538,7 @@ namespace Bank
                 "3. Other bank (RTGS)\n" +
                 "4. Other bank (IMPS)");
 
-            FundTransferOption bankOption = (FundTransferOption)Utilities.GetIntInput("");
+            FundTransferOption bankOption = (FundTransferOption)Utilities.GetIntInput();
 
             switch(bankOption)
             {
@@ -575,7 +578,7 @@ namespace Bank
         {
             string beneficiaryUsername;
             double amount;
-            while( !CustomerService.IsCustomerExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username")) )
+            while( !CustomerService.IsCustomerExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
             {
                 Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                 if (beneficiaryUsername.Equals("0"))
@@ -621,14 +624,14 @@ namespace Bank
 
         public static void OtherBankTransfer(Bank bank, AccountHolder customer, FundTransferOption bankOption)
         {
-            string otherBankName = Utilities.GetStringInput("Enter Bank Name");
+            string otherBankName = Utilities.GetStringInput("Enter Bank Name :");
             Bank otherBank;
             if (BankService.IsBankExists(BankStore.Banks, otherBankName))
             {
                 otherBank = BankService.GetBank(BankStore.Banks, otherBankName);
                 string beneficiaryUsername;
                 double amount;
-                while (!CustomerService.IsCustomerExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username")) )
+                while (!CustomerService.IsCustomerExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
                 {
                     Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                     if (beneficiaryUsername.Equals("0"))
@@ -681,7 +684,7 @@ namespace Bank
 
         public static void RevertTransaction(Bank bank)
         {
-            string transactionID = Utilities.GetStringInput("Enter Transaction ID");
+            string transactionID = Utilities.GetStringInput("Enter Transaction ID :");
 
             if (TransactionService.IsTransactionExists(bank,transactionID))
             {

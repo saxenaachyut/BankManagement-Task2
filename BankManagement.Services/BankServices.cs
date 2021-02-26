@@ -8,15 +8,7 @@ namespace Bank
     {
         public bool IsBankExists(List<Bank> bankList, string bankName)
         {
-            foreach (Bank bank in bankList)
-            {
-                if (bank.Name == bankName)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return bankList.Exists(b => b.Name == bankName);
         }
 
         public bool AddBank(List<Bank> bankList, Bank bank)
@@ -62,16 +54,9 @@ namespace Bank
 
         }
 
-        public Boolean IsStaffExists(Bank bank, string Username)
+        public Boolean IsStaffExists(Bank bank, string username)
         {
-            foreach (var staff in bank.StaffList)
-            {
-                if (Username.Equals(staff.UserName))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return bank.StaffList.Exists(b => b.UserName == username);
         }
 
         public void AddBankStaff(Bank bank, BankStaff bankStaff)
@@ -81,28 +66,12 @@ namespace Bank
         
         public BankStaff GetBankStaff(Bank bank, string username)
         {
-            foreach (BankStaff bankStaff in bank.StaffList)
-            {
-                if (username.Equals(bankStaff.UserName))
-                {
-                    return bankStaff;
-                }
-            }
-
-            return null;
+            return bank.StaffList.Find(b => b.UserName == username);
         }
 
         public Boolean IsCurrencyExists(Bank bank, string currencyCode)
         {
-            foreach (var currencyCodeittr in bank.CurrenyList)
-            {
-                if (currencyCodeittr.CurrencyCode.Equals(currencyCode))
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return bank.CurrenyList.Exists(b => b.CurrencyCode == currencyCode);
         }
 
         public void SetupNewCurrency(Currency currency, string name, string currencyCode, double exchangeRate)

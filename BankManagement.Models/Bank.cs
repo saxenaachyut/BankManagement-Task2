@@ -24,7 +24,7 @@ namespace Bank
             this.AccountsList = new List<AccountHolder>();
             this.StaffList = new List<BankStaff>();
             this.CurrenyList = new List<Currency>();
-            Currency defaultCurrency = new Currency();
+            this.DefaultCurrency = new Currency();
         }
 
     }

@@ -6,9 +6,8 @@ namespace Bank
 {
     public static class Utilities
     {
-        public static int GetIntInput(string text)
+        public static int GetIntInput()
         {
-            Console.WriteLine(text + " :");
             int integerInput;
             while (!int.TryParse(Console.ReadLine(), out integerInput))
             {
@@ -22,10 +21,10 @@ namespace Bank
         public static double GetDoubleInput(string text, string textIfFail)
         {
             double exchangeRate;
-            Console.WriteLine(text + " :");
+            Console.WriteLine(text);
             while (!double.TryParse(Console.ReadLine(), out exchangeRate))
             {
-                Console.WriteLine(textIfFail + " :");
+                Console.WriteLine(textIfFail);
             }
 
             return exchangeRate;
@@ -33,7 +32,7 @@ namespace Bank
 
         public static string GetStringInput(string text)
         {
-            Console.WriteLine(text + " :");
+            Console.WriteLine(text);
             string userInput = Console.ReadLine();
 
             return userInput;

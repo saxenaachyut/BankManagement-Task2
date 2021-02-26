@@ -48,19 +48,13 @@ namespace Bank
             }
         }
 
-        public Boolean IsTransactionExists(Bank bank, string transactionID)
+        public bool IsTransactionExists(Bank bank, string transactionID)
         {
             foreach (AccountHolder accountHolder in bank.AccountsList)
             {
                 if (accountHolder.AccountID.Equals(transactionID.Substring(14, 11)))
                 {
-                    foreach (Transaction transaction in accountHolder.TransactionList)
-                    {
-                        if (transaction.ID.Equals(transactionID))
-                        {
-                            return true;
-                        }
-                    }
+                    return accountHolder.TransactionList.Exists(b => b.ID == transactionID);
                 }
             }
             return false;
@@ -92,15 +86,7 @@ namespace Bank
 
         public Transaction GetTransaction(AccountHolder accountHolder, string transactionID)
         {
-            foreach (Transaction transaction in accountHolder.TransactionList)
-            {
-                if (transaction.ID.Equals(transactionID))
-                {
-                    return transaction;
-                }
-            }
-
-            return null;
+            return accountHolder.TransactionList.Find(b => b.ID == transactionID);
         }
 
         public void DepositAmount(AccountHolder accountHolder, Transaction transaction)
@@ -109,7 +95,7 @@ namespace Bank
             accountHolder.AccountBalance += transaction.Amount;
         }
 
-        public Boolean IsSufficientFundsAvailable(AccountHolder accountHolder, double amount)
+        public bool IsSufficientFundsAvailable(AccountHolder accountHolder, double amount)
         {
             if (accountHolder.AccountBalance > amount)
                 return true;

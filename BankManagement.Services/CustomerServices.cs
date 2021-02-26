@@ -7,16 +7,9 @@ namespace Bank
     public class CustomerServices
     {
 
-        public bool IsCustomerExists(Bank bank, string Username)
+        public bool IsCustomerExists(Bank bank, string username)
         {
-            foreach (var customer in bank.AccountsList)
-            {
-                if (Username.Equals(customer.UserName))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return bank.AccountsList.Exists(b => b.UserName == username);
         }
 
         public bool AddCustomer(Bank bank, AccountHolder customer)
