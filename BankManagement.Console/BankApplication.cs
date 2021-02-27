@@ -48,7 +48,7 @@ namespace Bank
 
                         if (!BankService.AddBank(BankStore.Banks, bank))
                         {
-                            Console.WriteLine("Failed to add Bank" +
+                            Console.WriteLine("Failed to add Bank\n" +
                                 "Press any key to continue...");
                             Console.ReadKey();
                             Console.Clear();
@@ -86,7 +86,7 @@ namespace Bank
                     }
                     else
                     {
-                        Console.WriteLine("Bank does not exists" +
+                        Console.WriteLine("Bank does not exists\n" +
                             "Press any key to continue...");
                         Console.ReadKey();
                         Console.Clear();
