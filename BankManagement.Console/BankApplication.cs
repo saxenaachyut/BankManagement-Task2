@@ -111,7 +111,7 @@ namespace Bank
                 Console.Clear();
                 StaffMenu(bank, bankStaff);
             }
-            else if (AccountHolderService.IsCustomerExists(bank, username))
+            else if (AccountHolderService.IsAccountHolderExists(bank, username))
             {
                 AccountHolder accountHolder = AccountHolderService.GetAccountHolder(bank, username);
                 while (!accountHolder.Password.Equals(Utilities.GetStringInput("Enter Password :")))
@@ -271,7 +271,7 @@ namespace Bank
         {
             string name, username;
             name = Utilities.GetStringInput("Enter Name");
-            while (AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+            while (AccountHolderService.IsAccountHolderExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User already exist enter a new Username or 0 to exit : ");
                 if (username.Equals("0"))
@@ -286,10 +286,7 @@ namespace Bank
             accountHolder.Password = Utilities.GetStringInput("Enter Password :");
             accountHolder.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
             accountHolder.Email = Utilities.GetStringInput("Enter User Email Address");
-            accountHolder.AccountNumber = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-            accountHolder.AvailableBalance = 0;
-            accountHolder.BankID = bank.ID;
-
+           
             if(!AccountHolderService.AddAccountHolder(bank, accountHolder))
             {
                 Utilities.DisplayMessage("Failed to add Account Holder");
@@ -305,7 +302,7 @@ namespace Bank
         public static void UpdateAccountHolder(Bank bank)
         {
             string username;
-            while ( !AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+            while ( !AccountHolderService.IsAccountHolderExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -324,7 +321,7 @@ namespace Bank
         public static void DeleteCustomerAccount(Bank bank)
         {
             string username;
-           while ( !AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+           while ( !AccountHolderService.IsAccountHolderExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -398,13 +395,13 @@ namespace Bank
         public static void TransactionHistory(Bank bank)
         {
             string accountHolderUsername;
-            while( !AccountHolderService.IsCustomerExists(bank, accountHolderUsername = Utilities.GetStringInput("Enter Customer Username")))
+            while( !AccountHolderService.IsAccountHolderExists(bank, accountHolderUsername = Utilities.GetStringInput("Enter Customer Username")))
             {
                 Console.WriteLine("User does not exists, Enter valid Username :");
             }
 
-            AccountHolder customer = AccountHolderService.GetAccountHolder(bank, accountHolderUsername);
-            foreach (Transaction transaction in customer.Transactions)
+            AccountHolder accountHolder = AccountHolderService.GetAccountHolder(bank, accountHolderUsername);
+            foreach (Transaction transaction in accountHolder.Transactions)
             {
                 Console.WriteLine("Transaction ID - " + transaction.ID + "\n");
                 Console.WriteLine("Transaction Date - " + transaction.CreatedOn + "\n");
@@ -551,7 +548,7 @@ namespace Bank
         {
             string beneficiaryUsername;
             double amount;
-            while( !AccountHolderService.IsCustomerExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
+            while( !AccountHolderService.IsAccountHolderExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
             {
                 Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                 if (beneficiaryUsername.Equals("0"))
@@ -609,7 +606,7 @@ namespace Bank
                 otherBank = BankService.GetBank(BankStore.Banks, otherBankName);
                 string beneficiaryUsername;
                 double amount;
-                while (!AccountHolderService.IsCustomerExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
+                while (!AccountHolderService.IsAccountHolderExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
                 {
                     Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                     if (beneficiaryUsername.Equals("0"))
@@ -668,7 +665,7 @@ namespace Bank
         {
             string username = Utilities.GetStringInput("Enter Username :");
    
-            if(AccountHolderService.IsCustomerExists(bank, username))
+            if(AccountHolderService.IsAccountHolderExists(bank, username))
             {
                 AccountHolder accountHolder = AccountHolderService.GetAccountHolder(bank, username);
 

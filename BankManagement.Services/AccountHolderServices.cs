@@ -7,16 +7,20 @@ namespace Bank
     public class AccountHolderServices
     {
 
-        public bool IsCustomerExists(Bank bank, string username)
+        public bool IsAccountHolderExists(Bank bank, string username)
         {
             return bank.Accounts.Exists(b => b.UserName == username);
         }
 
-        public bool AddAccountHolder(Bank bank, AccountHolder customer)
+        public bool AddAccountHolder(Bank bank, AccountHolder accountHolder)
         {
             try
             {
-                bank.Accounts.Add(customer);
+                accountHolder.AccountNumber = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                accountHolder.AvailableBalance = 0;
+                accountHolder.BankID = bank.ID;
+
+                bank.Accounts.Add(accountHolder);
                 return true;
             }
             catch(Exception)
