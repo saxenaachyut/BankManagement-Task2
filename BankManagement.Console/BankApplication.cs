@@ -302,11 +302,11 @@ namespace Bank
 
             if(!AccountHolderService.AddAccountHolder(bank, accountHolder))
             {
-                Utilities.DisplayMessage("Failed to add Customer");
+                Utilities.DisplayMessage("Failed to add Account Holder");
             }
             else
             {
-                Utilities.DisplayMessage("Customer Successfull added");
+                Utilities.DisplayMessage("Account Holder Successfull added");
             }
 
             
