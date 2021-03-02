@@ -25,7 +25,7 @@ namespace Bank
             }
         }
 
-        public AccountHolder GetCustomer(Bank bank, string username)
+        public AccountHolder GetAccountHolder(Bank bank, string username)
         {
             try
             {
@@ -39,7 +39,7 @@ namespace Bank
             }
         }
 
-        public AccountHolder GetCustomerThroughID(Bank bank, string accountID)
+        public AccountHolder GetAccountHolderThroughID(Bank bank, string accountID)
         {
             try
             {
@@ -53,11 +53,11 @@ namespace Bank
             }
         }
 
-        public bool RemoveCustomer(Bank bank, string username)
+        public bool RemoveAccountHolder(Bank bank, string username)
         {
             try
             {
-                bank.Accounts.Remove(GetCustomer(bank, username));
+                bank.Accounts.Remove(GetAccountHolder(bank, username));
                 return true;
             }
             catch (Exception)
@@ -69,14 +69,14 @@ namespace Bank
 
         public double GetAccountBalance(AccountHolder customer)
         {
-            return customer.AccountBalance;
+            return customer.AvailableBalance;
         }
 
         public bool DepositAmount(AccountHolder accountHolder, double amount)
         {
             try
             {
-                accountHolder.AccountBalance += amount;
+                accountHolder.AvailableBalance += amount;
                 return true;
             }
             catch (Exception)
@@ -87,7 +87,7 @@ namespace Bank
 
         public bool IsSufficientFundsAvailable(AccountHolder accountHolder, double amount)
         {
-            if (accountHolder.AccountBalance > amount)
+            if (accountHolder.AvailableBalance > amount)
                 return true;
             else
                 return false;
@@ -97,7 +97,7 @@ namespace Bank
         {
             try
             {
-                accountHolder.AccountBalance -= amount;
+                accountHolder.AvailableBalance -= amount;
                 return true;
             }
             catch (Exception)
@@ -106,12 +106,14 @@ namespace Bank
             }
         }
 
-        public bool TransferFunds(AccountHolder sender, AccountHolder beneficiary, double amount)
+        public bool TransferFunds(AccountHolder sender, AccountHolder beneficiary, Transaction transaction)
         {
             try
             {
-                sender.AccountBalance -= amount;
-                beneficiary.AccountBalance += amount;
+                sender.AvailableBalance -= transaction.Amount;
+                sender.Transactions.Add(transaction);
+                beneficiary.AvailableBalance += transaction.Amount;
+                beneficiary.Transactions.Add(transaction);
                 return true;
             }
             catch (Exception)

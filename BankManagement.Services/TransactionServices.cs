@@ -18,16 +18,16 @@ namespace Bank
             switch(bankOption)
             {
                 case FundTransferOption.SameBankRTGS:
-                    totaltrasferamount = amount + amount * (bank.SameBankRTGS / 100);
+                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.SameBankRTGS / 100);
                     break;
                 case FundTransferOption.SameBankIMPS:
-                    totaltrasferamount = amount + amount * (bank.SameBankIMPS / 100);
+                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.SameBankIMPS / 100);
                     break;
                 case FundTransferOption.OtherBankRTGS:
-                    totaltrasferamount = amount + amount * (bank.OtherBankRTGS / 100);
+                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.OtherBankRTGS / 100);
                     break;
                 case FundTransferOption.OtherBankIMPS:
-                    totaltrasferamount = amount + amount * (bank.OtherBankIMPS / 100);
+                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.OtherBankIMPS / 100);
                     break;
                 default:
                     break;
@@ -59,13 +59,29 @@ namespace Bank
         {
             try
             {
-                if (transaction.Type == TransactionType.Debit)
+                switch(transaction.Type)
                 {
-                    accountHolder.AccountBalance += transaction.Amount;                   
-                }
-                else if (transaction.Type == TransactionType.Credit)
-                {
-                    accountHolder.AccountBalance -= transaction.Amount;
+                    case TransactionType.Debit:
+                        accountHolder.AvailableBalance += transaction.Amount;
+                        break;
+
+                    case TransactionType.Credit:
+                        accountHolder.AvailableBalance -= transaction.Amount;
+                        break;
+
+                    case TransactionType.Transfer:
+                        if( transaction.SrcAccountNumber == accountHolder.AccountNumber )
+                        {
+                            accountHolder.AvailableBalance += transaction.Amount;
+                        }
+                        else if( transaction.DestAccountNumber == accountHolder.AccountNumber )
+                        {
+                            accountHolder.AvailableBalance -= transaction.Amount;
+                        }
+                        break;
+
+                    default:
+                        return false;
                 }
 
                 transaction.IsReverted = true;

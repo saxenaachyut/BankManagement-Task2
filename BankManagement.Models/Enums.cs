@@ -2,21 +2,14 @@
 
 namespace Bank
 {
-    public enum MainMenuOption
+    public enum MainMenu
     {
         CreateNewBank = 1, 
         Login = 2, 
         Exit = 3
     }
 
-    public enum BankMenuOption
-    {
-        Login = 1, 
-        GoBack = 2
-
-    }
-
-    public enum StaffMenuOption
+    public enum StaffMenu
     {
         CreateAccountHolder = 1,
         UpdateAccountHolder = 2,
@@ -29,7 +22,7 @@ namespace Bank
         Logout = 9
     }
 
-    public enum CustomerMenuOption
+    public enum AccountHolderMenu
     {
         Deposit = 1,
         Withdraw = 2,
@@ -42,6 +35,7 @@ namespace Bank
     {
         Credit = 1, 
         Debit = 2, 
+        Transfer = 3
     }
 
     public enum ServiceCharges

@@ -15,6 +15,17 @@ namespace Bank
         {
             try
             {
+                bank.ID = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bank.ServiceChargeRates.SameBankRTGS = 0;
+                bank.ServiceChargeRates.SameBankIMPS = 5;
+                bank.ServiceChargeRates.OtherBankRTGS = 2;
+                bank.ServiceChargeRates.OtherBankIMPS = 6;
+                Currency defaultCurrency = new Currency();
+                defaultCurrency.CurrencyCode = Constants.DefaultCurrencyCode;
+                defaultCurrency.Name = Constants.DefaultCurrencyName;
+                defaultCurrency.ExcahngeRate = Constants.DefaultExchangeRate;
+                defaultCurrency.IsDefault = true;
+                bank.Currencies.Add(defaultCurrency);
                 bankList.Add(bank);
                 return true;
             }
@@ -63,6 +74,8 @@ namespace Bank
         {
             try
             {
+                bankStaff.AccountNumber = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bankStaff.EmployeeID = Convert.ToString(bank.Employees.Count + 1);
                 bank.Employees.Add(bankStaff);
                 return true;
             }
@@ -82,14 +95,7 @@ namespace Bank
         {
             return bank.Currencies.Exists(b => b.CurrencyCode == currencyCode);
         }
-
-        public void SetupNewCurrency(Currency currency, string name, string currencyCode, double exchangeRate)
-        {
-            currency.Name = name;
-            currency.CurrencyCode = currencyCode;
-            currency.ExcahngeRate = exchangeRate;
-        }
-
+          
         public bool AddCurrency(Bank bank, Currency currency)
         {
             try
@@ -107,11 +113,11 @@ namespace Bank
         {
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                bank.SameBankRTGS = newRate;
+                bank.ServiceChargeRates.SameBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                bank.SameBankIMPS = newRate;
+                bank.ServiceChargeRates.SameBankIMPS = newRate;
             }
         }
 
@@ -119,15 +125,13 @@ namespace Bank
         {
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                bank.OtherBankRTGS = newRate;
+                bank.ServiceChargeRates.OtherBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                bank.OtherBankIMPS = newRate;
+                bank.ServiceChargeRates.OtherBankIMPS = newRate;
             }
         }
-
-        
-        
+      
     }
 }
