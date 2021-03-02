@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Bank
+{
+    public class AccountHolderServices
+    {
+
+        public bool IsCustomerExists(Bank bank, string username)
+        {
+            return bank.Accounts.Exists(b => b.UserName == username);
+        }
+
+        public bool AddAccountHolder(Bank bank, AccountHolder customer)
+        {
+            try
+            {
+                bank.Accounts.Add(customer);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
+        public AccountHolder GetCustomer(Bank bank, string username)
+        {
+            try
+            {
+                AccountHolder accountHolder = bank.Accounts.Find(b => b.UserName == username);
+                return accountHolder;
+            }
+
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public AccountHolder GetCustomerThroughID(Bank bank, string accountID)
+        {
+            try
+            {
+                AccountHolder accountHolder = bank.Accounts.Find(b => b.AccountNumber == accountID);
+                return accountHolder;
+            }
+
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public bool RemoveCustomer(Bank bank, string username)
+        {
+            try
+            {
+                bank.Accounts.Remove(GetCustomer(bank, username));
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
+        }
+
+        public double GetAccountBalance(AccountHolder customer)
+        {
+            return customer.AccountBalance;
+        }
+
+        public bool DepositAmount(AccountHolder accountHolder, double amount)
+        {
+            try
+            {
+                accountHolder.AccountBalance += amount;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool IsSufficientFundsAvailable(AccountHolder accountHolder, double amount)
+        {
+            if (accountHolder.AccountBalance > amount)
+                return true;
+            else
+                return false;
+        }
+
+        public bool WithdrawAmount(AccountHolder accountHolder, double amount)
+        {
+            try
+            {
+                accountHolder.AccountBalance -= amount;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public bool TransferFunds(AccountHolder sender, AccountHolder beneficiary, double amount)
+        {
+            try
+            {
+                sender.AccountBalance -= amount;
+                beneficiary.AccountBalance += amount;
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+    }
+}

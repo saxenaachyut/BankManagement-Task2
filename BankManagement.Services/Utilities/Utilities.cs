@@ -38,6 +38,22 @@ namespace Bank
             return userInput;
         }
 
+        public static void DisplayMessage(string text)
+        {
+            Console.WriteLine(text + "\nPress any key to continue...");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        public static void DisplayBankList(List<Bank> list)
+        {
+            int i = 1;
+            foreach(Bank bank in list)
+            {
+                Console.WriteLine((i++) + ". " + bank.Name + "\n");
+            }
+        }
+
     }
 }
 

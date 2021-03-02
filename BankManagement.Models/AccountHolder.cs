@@ -5,15 +5,19 @@ namespace Bank
 {
     public class AccountHolder : User
     {
-        public string BankName { get; set; }
-        public string AccountID { get; set; }
+        public string AccountNumber { get; set; }
+       
         public double AccountBalance { get; set; }
+        
+        public string Email { get; set; }
+        
         public string BankID { get; set; }
-        public List<Transaction> TransactionList {get; set;}
+        
+        public List<Transaction> Transactions {get; set;}
 
         public AccountHolder()
         {
-            this.TransactionList = new List<Transaction>();
+            this.Transactions = new List<Transaction>();
         }
     }
 }

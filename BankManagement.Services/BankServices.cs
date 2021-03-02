@@ -56,22 +56,31 @@ namespace Bank
 
         public Boolean IsStaffExists(Bank bank, string username)
         {
-            return bank.StaffList.Exists(b => b.UserName == username);
+            return bank.Employees.Exists(b => b.UserName == username);
         }
 
-        public void AddBankStaff(Bank bank, BankStaff bankStaff)
+        public bool AddBankStaff(Bank bank, BankStaff bankStaff)
         {
-            bank.StaffList.Add(bankStaff);
+            try
+            {
+                bank.Employees.Add(bankStaff);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+            
         }
         
         public BankStaff GetBankStaff(Bank bank, string username)
         {
-            return bank.StaffList.Find(b => b.UserName == username);
+            return bank.Employees.Find(b => b.UserName == username);
         }
 
         public Boolean IsCurrencyExists(Bank bank, string currencyCode)
         {
-            return bank.CurrenyList.Exists(b => b.CurrencyCode == currencyCode);
+            return bank.Currencies.Exists(b => b.CurrencyCode == currencyCode);
         }
 
         public void SetupNewCurrency(Currency currency, string name, string currencyCode, double exchangeRate)
@@ -81,9 +90,17 @@ namespace Bank
             currency.ExcahngeRate = exchangeRate;
         }
 
-        public void AddCurrency(Bank bank, Currency currency)
+        public bool AddCurrency(Bank bank, Currency currency)
         {
-            bank.CurrenyList.Add(currency);
+            try
+            {
+                bank.Currencies.Add(currency);
+                return true;
+            }
+            catch(Exception)
+            {
+                return false;
+            }
         }
 
         public void SetSameBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType)

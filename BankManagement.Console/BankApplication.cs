@@ -6,12 +6,12 @@ namespace Bank
     public class BankApplication
     {
         public static BankServices BankService;
-        public static CustomerServices CustomerService;
+        public static AccountHolderServices AccountHolderService;
         public static TransactionServices TransactionService;
         static void Main()
         {
             BankService = new BankServices();
-            CustomerService = new CustomerServices();
+            AccountHolderService = new AccountHolderServices();
             TransactionService = new TransactionServices();
      
             MainMenu();
@@ -41,17 +41,16 @@ namespace Bank
                         bank.SameBankIMPS = 5;
                         bank.OtherBankRTGS = 2;
                         bank.OtherBankIMPS = 6;
-                        bank.DefaultCurrency.CurrencyCode = "INR";
-                        bank.DefaultCurrency.Name = "Indian National Rupee";
-                        bank.DefaultCurrency.ExcahngeRate = 0;
-                        bank.CurrenyList.Add(bank.DefaultCurrency);
+                        Currency defaultCurrency = new Currency();
+                        defaultCurrency.CurrencyCode = "INR";
+                        defaultCurrency.Name = "Indian National Rupee";
+                        defaultCurrency.ExcahngeRate = 0;
+                        defaultCurrency.IsDefault = true;
+                        bank.Currencies.Add(defaultCurrency);
 
                         if (!BankService.AddBank(BankStore.Banks, bank))
                         {
-                            Console.WriteLine("Failed to add Bank\n" +
-                                "Press any key to continue...");
-                            Console.ReadKey();
-                            Console.Clear();
+                            Utilities.DisplayMessage("Failed to add Bank");
                             MainMenu();
                         }
 
@@ -59,39 +58,41 @@ namespace Bank
                         admin.Name = Utilities.GetStringInput("Enter name for Admin account :"); ;
                         admin.UserName = Utilities.GetStringInput("Enter Username for Admin account :"); ;
                         admin.Password = Utilities.GetStringInput("Enter password for Admin Account :");
-                        admin.AccountID = admin.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-                        BankService.AddBankStaff(bank, admin);
-
-                        Console.WriteLine("Bank Successfull created and added \n" +
-                            "Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
+                        admin.AccountNumber = admin.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                        admin.EmployeeID = Convert.ToString(BankStore.Banks.Count + 1);
+                        if(BankService.AddBankStaff(bank, admin))
+                        {
+                            Utilities.DisplayMessage("Admin Account Created Successfully\n" +
+                                "Bank Successfull created and added");
+                        }
+                        else
+                        {
+                            Utilities.DisplayMessage("Could not add Admin account successfully");
+                            MainMenu();
+                        }
                     }
                     else
                     {
-                        Console.WriteLine("Bank already exists\n" +
-                            "Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
+                        Utilities.DisplayMessage("Bank already exists");
                     }
                     MainMenu();
                     break;
 
-                case MainMenuOption.LogintoExistingBank:
+                case MainMenuOption.Login:
                     Console.Clear();
-                    bankName = Utilities.GetStringInput("Enter Bank Name :");
-                    if (BankService.IsBankExists(BankStore.Banks, bankName))
+                    Console.WriteLine("Select the Bank to Login to");
+                    Utilities.DisplayBankList(BankStore.Banks);
+                    int selectBank = Utilities.GetIntInput();
+                    while (BankStore.Banks.Count < selectBank)
                     {
-                        Login(BankService.GetBank(BankStore.Banks, bankName));
+                        Console.WriteLine("Select a valid option :");
+                        selectBank = Utilities.GetIntInput();
                     }
-                    else
-                    {
-                        Console.WriteLine("Bank does not exists\n" +
-                            "Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
-                        MainMenu();
-                    }
+
+                    Bank selectedBank = BankStore.Banks[selectBank - 1];
+                    Console.Clear();
+                    BankLogin(selectedBank);
+                    
                     break;
 
                 case MainMenuOption.Exit:
@@ -104,72 +105,54 @@ namespace Bank
             }
         }
 
-        public static void Login(Bank bank)
+        public static void BankLogin(Bank bank)
         {
-            Console.Clear();
             Console.WriteLine("Welcome to " + bank.Name + " Bank :\n" +
-                "-------------------------------------------------------\n" +
-                "1. Login\n" +
-                "2. Go Back");
+               "-------------------------------------------------------\n");
 
-            BankMenuOption menuOption = (BankMenuOption)Utilities.GetIntInput();
-
-            switch (menuOption)
+            string username = Utilities.GetStringInput("Enter Username to Login or Type Exit to go back");
+            if (BankService.IsStaffExists(bank, username))
             {
-                case BankMenuOption.Login:
-                    Console.Clear();
-                    string username = Utilities.GetStringInput("Enter Username");
-                    if (BankService.IsStaffExists(bank, username))
-                    {
-                        BankStaff bankStaff = BankService.GetBankStaff(bank, username);
-                        while (!bankStaff.Password.Equals(Utilities.GetStringInput("Enter Password :")))
-                        {
-                            Console.WriteLine("Incorrect Password Entered, Enter again : ");
-                        }
-                        Console.Clear();
-                        StaffMenu(bank, bankStaff);
-                    }
-                    else if(CustomerService.IsCustomerExists(bank, username))
-                    {
-                        AccountHolder customer = CustomerService.GetCustomer(bank, username);
-                        while (!customer.Password.Equals(Utilities.GetStringInput("Enter Password :")))
-                        {
-                            Console.WriteLine("Incorrect Password Entered, Enter again : ");
-                        }
-                        Console.Clear();
-                        CustomerMenu(bank, customer);
-                    }
-                    else
-                    {
-                        Console.WriteLine("User does not exists\n" +
-                            "Press any key to continue...");
-                        Console.ReadKey();
-                        Console.Clear();
-                        Login(bank);
-                    }
-                    break;
-
-                case BankMenuOption.GoBack:
-                    Console.Clear();
-                    MainMenu();
-                    break;
-                default:
-                    Console.WriteLine("Invalid Selection\n");
-                    Login(bank);
-                    break;
+                BankStaff bankStaff = BankService.GetBankStaff(bank, username);
+                while (!bankStaff.Password.Equals(Utilities.GetStringInput("Enter Password :")))
+                {
+                    Console.WriteLine("Incorrect Password Entered, Enter again : ");
+                }
+                Console.Clear();
+                StaffMenu(bank, bankStaff);
+            }
+            else if (AccountHolderService.IsCustomerExists(bank, username))
+            {
+                AccountHolder customer = AccountHolderService.GetCustomer(bank, username);
+                while (!customer.Password.Equals(Utilities.GetStringInput("Enter Password :")))
+                {
+                    Console.WriteLine("Incorrect Password Entered, Enter again : ");
+                }
+                Console.Clear();
+                CustomerMenu(bank, customer);
+            }
+            else if (username.ToLower().Equals("exit"))
+            {
+                Console.Clear();
+                MainMenu();
+            }
+            else
+            {
+                Utilities.DisplayMessage("User does not exists");
+                Console.Clear();
+                BankLogin(bank);
             }
 
 
         }
 
-
         public static void StaffMenu(Bank bank, BankStaff bankStaff)
         {
             Console.WriteLine("Welcome " + bankStaff.Name + " :\n" +
                 "----------------------------------------------------\n" +
-                "1. Create new Customer Account\n" +
-                "2. Update Customer Account\n" +
-                "3. Delete Customer Account\n" +
+                "1. Create new Account Holder\n" +
+                "2. Update Account Holder\n" +
+                "3. Delete Account Holder\n" +
                 "4. Add New Currency\n" +
                 "5. Update Service Charges for same bank\n" +
                 "6. Update Service Charges for different bank\n" +
@@ -181,19 +164,19 @@ namespace Bank
 
             switch (menuOption)
             {
-                case StaffMenuOption.CreateNewCustomerAccount:
+                case StaffMenuOption.CreateAccountHolder:
                     Console.Clear();
                     CreateNewCustomerAccount(bank);
                     StaffMenu(bank, bankStaff);
                     break;
 
-                case StaffMenuOption.UpdateCustomerAccount:
+                case StaffMenuOption.UpdateAccountHolder:
                     Console.Clear();
                     UpdateCustomerAccount(bank);
                     StaffMenu(bank, bankStaff);
                     break;
 
-                case StaffMenuOption.DeleteCustomerAccount:
+                case StaffMenuOption.DeleteAccountHolder:
                     Console.Clear();
                     DeleteCustomerAccount(bank);
                     StaffMenu(bank, bankStaff);
@@ -230,7 +213,8 @@ namespace Bank
                     break;
 
                 case StaffMenuOption.Logout:
-                    Login(bank);
+                    Console.Clear();
+                    BankLogin(bank);
                     break;
                 default:
                     Console.WriteLine("Invalid Selection");
@@ -279,7 +263,7 @@ namespace Bank
                     break;
 
                 case CustomerMenuOption.Logout:
-                    Login(bank);
+                    BankLogin(bank);
                     break;
 
                 default:
@@ -297,7 +281,7 @@ namespace Bank
         {
             string name, username;
             name = Utilities.GetStringInput("Enter Name");
-            while (CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+            while (AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User already exist enter a new Username or 0 to exit : ");
                 if (username.Equals("0"))
@@ -311,23 +295,17 @@ namespace Bank
             customer.UserName = username;
             customer.Password = Utilities.GetStringInput("Enter Password :");
             customer.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
-            customer.AccountID = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+            customer.AccountNumber = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
             customer.AccountBalance = 0;
             customer.BankID = bank.ID;
 
-            if(!CustomerService.AddCustomer(bank, customer))
+            if(!AccountHolderService.AddAccountHolder(bank, customer))
             {
-                Console.WriteLine("Failed to add Customer" +
-                    "Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                Utilities.DisplayMessage("Failed to add Customer");
             }
             else
             {
-                Console.WriteLine("Customer Successfull added\n" +
-                "Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                Utilities.DisplayMessage("Customer Successfull added");
             }
 
             
@@ -336,7 +314,7 @@ namespace Bank
         public static void UpdateCustomerAccount(Bank bank)
         {
             string username;
-            while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+            while ( !AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -346,19 +324,16 @@ namespace Bank
                 }
             }
 
-            CustomerService.GetCustomer(bank,username).Password = Utilities.GetStringInput("Enter New Password :");
+            AccountHolderService.GetCustomer(bank,username).Password = Utilities.GetStringInput("Enter New Password :");
 
-            Console.WriteLine("Password Updated Successfully\n" +
-                "Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            Utilities.DisplayMessage("Password Updated Successfully");
 
         }
 
         public static void DeleteCustomerAccount(Bank bank)
         {
             string username;
-           while ( !CustomerService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
+           while ( !AccountHolderService.IsCustomerExists(bank, username = Utilities.GetStringInput("Enter Username :")))
             {
                 Console.WriteLine("User does not exists, Enter 0 to Exit or Enter a valid Username : ");
                 if (username.Equals("0"))
@@ -380,11 +355,8 @@ namespace Bank
 
             }
 
-            CustomerService.RemoveCustomer(bank,username);
-            Console.WriteLine("Customer Successfully Removed\n" +
-                "Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            AccountHolderService.RemoveCustomer(bank,username);
+            Utilities.DisplayMessage("Customer Successfully Removed");
         }
 
         public static void AddNewCurrency(Bank bank)
@@ -408,11 +380,7 @@ namespace Bank
             BankService.SetupNewCurrency(newCurrency, currencyName, currencyCode, exchangeRate);
             BankService.AddCurrency(bank, newCurrency);
 
-            Console.Write("Currency succesfully added\n" +
-                "Press any button to continue...");
-            Console.ReadKey();
-            Console.Clear();
-
+            Utilities.DisplayMessage("Currency succesfully added");
         }
 
         public static void UpdateServiceChargeSameBank(Bank bank)
@@ -424,10 +392,7 @@ namespace Bank
             newRate = Utilities.GetDoubleInput("Enter Rate for Same Bank IMPS", "Only numbers are acccepted, Enter valid Rate again");
             BankService.SetSameBankRate(bank, newRate, ServiceCharges.IMPS);
 
-            Console.WriteLine("Rates for same bank transfers updated successfully\n" +
-                "Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            Utilities.DisplayMessage("Rates for same bank transfers updated successfully");
         }
 
         public static void UpdateServiceChargeOtherBank(Bank bank)
@@ -439,28 +404,25 @@ namespace Bank
             newRate = Utilities.GetDoubleInput("Enter Rate for Other Bank IMPS", "Only numbers are acccepted, Enter valid Rate again");
             BankService.SetOtherBankRate(bank, newRate, ServiceCharges.IMPS);
 
-            Console.WriteLine("Rates for other bank transfers updated successfully\n" +
-                "Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            Utilities.DisplayMessage("Rates for other bank transfers updated successfully");
         }
 
         public static void TransactionHistory(Bank bank)
         {
             string accountHolderUsername;
-            while( !CustomerService.IsCustomerExists(bank, accountHolderUsername = Utilities.GetStringInput("Enter Customer Username")))
+            while( !AccountHolderService.IsCustomerExists(bank, accountHolderUsername = Utilities.GetStringInput("Enter Customer Username")))
             {
                 Console.WriteLine("User does not exists, Enter valid Username :");
             }
 
-            AccountHolder customer = CustomerService.GetCustomer(bank, accountHolderUsername);
-            foreach (Transaction transaction in customer.TransactionList)
+            AccountHolder customer = AccountHolderService.GetCustomer(bank, accountHolderUsername);
+            foreach (Transaction transaction in customer.Transactions)
             {
                 Console.WriteLine("Transaction ID - " + transaction.ID + "\n");
-                Console.WriteLine("Transaction Date - " + transaction.TransactionDate + "\n");
-                Console.WriteLine("Transaction Type - " + transaction.TransactionType + "\n");
-                Console.WriteLine("Source Account Number - " + transaction.SrcAccountID + "\n");
-                Console.WriteLine("Destination Account Number - " + transaction.DestAccountID + "\n");
+                Console.WriteLine("Transaction Date - " + transaction.CreatedOn + "\n");
+                Console.WriteLine("Transaction Type - " + transaction.Type + "\n");
+                Console.WriteLine("Source Account Number - " + transaction.SrcAccountNumber + "\n");
+                Console.WriteLine("Destination Account Number - " + transaction.DestAccountNumber + "\n");
                 Console.WriteLine("Amount - " + transaction.Amount + "\n");
             }
 
@@ -471,13 +433,13 @@ namespace Bank
 
         public static void TransactionHistory(AccountHolder accountHolder)
         {            
-            foreach(Transaction transaction in accountHolder.TransactionList)
+            foreach(Transaction transaction in accountHolder.Transactions)
             {
                 Console.WriteLine("Transaction ID - " + transaction.ID + "\n");
-                Console.WriteLine("Transaction Date - " + transaction.TransactionDate + "\n");
-                Console.WriteLine("Transaction Type - " + transaction.TransactionType + "\n");
-                Console.WriteLine("Source Account Number - " + transaction.SrcAccountID + "\n");
-                Console.WriteLine("Destination Account Number - " + transaction.DestAccountID + "\n");
+                Console.WriteLine("Transaction Date - " + transaction.CreatedOn + "\n");
+                Console.WriteLine("Transaction Type - " + transaction.Type + "\n");
+                Console.WriteLine("Source Account Number - " + transaction.SrcAccountNumber + "\n");
+                Console.WriteLine("Destination Account Number - " + transaction.DestAccountNumber + "\n");
                 Console.WriteLine("Amount - " + transaction.Amount + "\n");
             }
 
@@ -490,42 +452,67 @@ namespace Bank
         {
             double amount;
             amount = Utilities.GetDoubleInput("Enter Amount to Deposit", "Only Numbers Accepted, Enter Amount again");
-            Transaction newTransaction = new Transaction();
-            TransactionService.SetupNewTransaction(newTransaction, accountHolder.AccountID, amount, bank.ID, accountHolder.AccountID, TransactionType.Deposit);
+            Transaction transaction = new Transaction()
+            {
+                SrcAccountNumber = accountHolder.AccountNumber,
+                DestAccountNumber = accountHolder.AccountNumber,
+                SrcBankID = accountHolder.BankID,
+                CreatedOn = DateTime.Now.ToString("f"),
+                CreatedBy = accountHolder.AccountNumber,
+                ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                DestBankID = accountHolder.BankID,
+                Amount = amount,
+                Type = TransactionType.Credit,
+                IsReverted = false
+            };
 
-            TransactionService.DepositAmount(accountHolder,newTransaction);
-
-            Console.WriteLine("Amount Deposited Successfully\n" +
-                "Total Closing Amount : " + CustomerService.GetAccountBalance(accountHolder) + " \n" +
-                "\n Press any key to continue...");
-            Console.ReadKey();
-            Console.Clear();
+            if(AccountHolderService.DepositAmount(accountHolder,amount) && TransactionService.AddTransaction(accountHolder, transaction))
+            {
+                Utilities.DisplayMessage("Amount Deposited Successfully\n" +
+                    "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
+            }
+            else
+            {
+                Utilities.DisplayMessage("Failed to Deposit Amount\n" +
+                    "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
+            }        
         }
 
         public static void Withdraw(Bank bank, AccountHolder accountHolder)
         {
             double amount;
             amount = Utilities.GetDoubleInput("Enter Amount to Withdraw", "Only Numbers Accepted, Enter Amount again");
-            Transaction newTransaction = new Transaction();
-            TransactionService.SetupNewTransaction(newTransaction, accountHolder.AccountID, amount, bank.ID, accountHolder.AccountID, TransactionType.Withdrawl);
-
-            if ( TransactionService.IsSufficientFundsAvailable(accountHolder,amount) )
+            Transaction newTransaction = new Transaction()
             {
-                TransactionService.WithdrawAmount(accountHolder, newTransaction);
+                SrcAccountNumber = accountHolder.AccountNumber,
+                DestAccountNumber = accountHolder.AccountNumber,
+                SrcBankID = accountHolder.BankID,
+                CreatedOn = DateTime.Now.ToString("f"),
+                CreatedBy = accountHolder.AccountNumber,
+                ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                DestBankID = accountHolder.BankID,
+                Amount = amount,
+                Type = TransactionType.Debit,
+                IsReverted = false
+            };
 
-                Console.WriteLine("Amount Withdrawed Successfully\n" +
-                "Total Closing Amount : " + CustomerService.GetAccountBalance(accountHolder) + " \n" +
-                "\n Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+            if (AccountHolderService.IsSufficientFundsAvailable(accountHolder,amount) )
+            {
+                if(AccountHolderService.WithdrawAmount(accountHolder, amount) && TransactionService.AddTransaction(accountHolder, newTransaction))
+                {
+                    Utilities.DisplayMessage("Amount Withdrawed Successfully\n" +
+                        "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
+                }
+                else
+                {
+                    Utilities.DisplayMessage("Failed to Withdraw Amount\n" +
+                        "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
+                }               
             }
             else
             {
-                Console.WriteLine("Sufficent Funds not available\n" +
-                    "Total Closing Amount : " + CustomerService.GetAccountBalance(accountHolder) + " \n" +
-                    "Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                Utilities.DisplayMessage("Sufficent Funds not available\n" +
+                    "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
             }
 
         }
@@ -578,7 +565,7 @@ namespace Bank
         {
             string beneficiaryUsername;
             double amount;
-            while( !CustomerService.IsCustomerExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
+            while( !AccountHolderService.IsCustomerExists(bank,beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
             {
                 Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                 if (beneficiaryUsername.Equals("0"))
@@ -586,43 +573,62 @@ namespace Bank
                     Console.Clear();
                     return;
                 }
-
             }
 
-            AccountHolder beneficiary = CustomerService.GetCustomer(bank, beneficiaryUsername);
+            AccountHolder beneficiary = AccountHolderService.GetCustomer(bank, beneficiaryUsername);
 
             amount = Utilities.GetDoubleInput("Enter Amount to transfer","Invalid input, Enter valid Amount :");
 
             amount = TransactionService.GetTrasferAmount(bank, bankOption, amount);
 
-            if (TransactionService.IsSufficientFundsAvailable(accountHolder, amount))
+            if (AccountHolderService.IsSufficientFundsAvailable(accountHolder, amount))
             {
-                Transaction newDebitTransaction = new Transaction();
-                TransactionService.SetupNewTransaction(newDebitTransaction, accountHolder.AccountID, beneficiary.AccountID, amount, bank.ID, accountHolder.AccountID, beneficiary.BankID, TransactionType.TransferDebit);
+                Transaction debitTransaction = new Transaction()
+                {
+                    SrcAccountNumber = accountHolder.AccountNumber,
+                    DestAccountNumber = beneficiary.AccountNumber,
+                    SrcBankID = accountHolder.BankID,
+                    DestBankID = beneficiary.BankID,
+                    ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                    CreatedOn = DateTime.Now.ToString("f"),
+                    CreatedBy = accountHolder.AccountNumber,
+                    Amount = amount,
+                    Type = TransactionType.Debit,
+                    IsReverted = false
+                };
 
-                Transaction newCreditTransaction = new Transaction();
-                TransactionService.SetupNewTransaction(newDebitTransaction, accountHolder.AccountID, beneficiary.AccountID, amount, bank.ID, accountHolder.AccountID, beneficiary.BankID, TransactionType.TransferCredit);
+                Transaction creditTransaction = new Transaction()
+                {
+                    SrcAccountNumber = accountHolder.AccountNumber,
+                    DestAccountNumber = beneficiary.AccountNumber,
+                    SrcBankID = accountHolder.BankID,
+                    DestBankID = beneficiary.BankID,
+                    ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                    CreatedOn = DateTime.Now.ToString("f"),
+                    CreatedBy = accountHolder.AccountNumber,
+                    Amount = amount,
+                    Type = TransactionType.Credit,
+                    IsReverted = false
+                };
 
-                TransactionService.TransferFunds(accountHolder, beneficiary, newCreditTransaction, newDebitTransaction);
-
-                Console.WriteLine("Amount Successfull Transfered \n" +
-                    "Total closing amount " + CustomerService.GetAccountBalance(accountHolder) +
-                    "\nPress any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-
+                if(AccountHolderService.TransferFunds(accountHolder, beneficiary, amount) && TransactionService.AddTransaction(accountHolder, debitTransaction) && TransactionService.AddTransaction(beneficiary, creditTransaction))
+                {
+                    Utilities.DisplayMessage("Amount Successfull Transfered \n" +
+                        "Total closing amount " + AccountHolderService.GetAccountBalance(accountHolder));
+                }
+                else
+                {
+                    Utilities.DisplayMessage("Amount Transfer Failed \n" +
+                        "Total closing amount " + AccountHolderService.GetAccountBalance(accountHolder));
+                }
             }
             else
             {
-                Console.WriteLine("Insufficent Funds \n" +
-                    "Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
-                CustomerMenu(bank, accountHolder);
+                Utilities.DisplayMessage("Insufficent Funds");
             }
         }
 
-        public static void OtherBankTransfer(Bank bank, AccountHolder customer, FundTransferOption bankOption)
+        public static void OtherBankTransfer(Bank bank, AccountHolder accountHolder, FundTransferOption bankOption)
         {
             string otherBankName = Utilities.GetStringInput("Enter Bank Name :");
             Bank otherBank;
@@ -631,7 +637,7 @@ namespace Bank
                 otherBank = BankService.GetBank(BankStore.Banks, otherBankName);
                 string beneficiaryUsername;
                 double amount;
-                while (!CustomerService.IsCustomerExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
+                while (!AccountHolderService.IsCustomerExists(otherBank, beneficiaryUsername = Utilities.GetStringInput("Enter Benificary's Username :")) )
                 {
                     Console.WriteLine("User does not exists, Enter a valid Username or 0 to exit :");
                     if (beneficiaryUsername.Equals("0"))
@@ -641,91 +647,140 @@ namespace Bank
                     }
                 }
 
-                AccountHolder beneficiary = CustomerService.GetCustomer(otherBank, beneficiaryUsername);
+                AccountHolder beneficiary = AccountHolderService.GetCustomer(otherBank, beneficiaryUsername);
 
 
                 amount = Utilities.GetDoubleInput("Enter Amount to transfer", "Invalid input, Enter valid Amount :");
 
                 amount = TransactionService.GetTrasferAmount(bank, bankOption, amount);
 
-                if (TransactionService.IsSufficientFundsAvailable(customer, amount))
+                if (AccountHolderService.IsSufficientFundsAvailable(accountHolder, amount))
                 {
-                    Transaction newDebitTransfer = new Transaction();
-                    TransactionService.SetupNewTransaction(newDebitTransfer, customer.AccountID, beneficiary.AccountID, amount, customer.BankID, customer.AccountID, beneficiary.BankID, TransactionType.TransferDebit);
+                    Transaction newDebitTransfer = new Transaction()
+                    {
+                        SrcAccountNumber = accountHolder.AccountNumber,
+                        DestAccountNumber = beneficiary.AccountNumber,
+                        SrcBankID = accountHolder.BankID,
+                        DestBankID = beneficiary.BankID,
+                        ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                        CreatedOn = DateTime.Now.ToString("f"),
+                        CreatedBy = accountHolder.AccountNumber,
+                        Amount = amount,
+                        Type = TransactionType.Debit,
+                        IsReverted = false
+                    };
 
-                    Transaction newCreditTransfer = new Transaction();
-                    TransactionService.SetupNewTransaction(newDebitTransfer, customer.AccountID, beneficiary.AccountID, amount, customer.BankID, customer.AccountID, beneficiary.BankID, TransactionType.TransferCredit);
+                    Transaction newCreditTransfer = new Transaction()
+                    {
+                        SrcAccountNumber = accountHolder.AccountNumber,
+                        DestAccountNumber = beneficiary.AccountNumber,
+                        SrcBankID = accountHolder.BankID,
+                        DestBankID = beneficiary.BankID,
+                        ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                        CreatedOn = DateTime.Now.ToString("f"),
+                        CreatedBy = accountHolder.AccountNumber,
+                        Amount = amount,
+                        Type = TransactionType.Credit,
+                        IsReverted = false
+                    };
 
 
-                    TransactionService.TransferFunds(customer, beneficiary, newDebitTransfer, newCreditTransfer);
-
-                    Console.WriteLine("Amount Successfull Transfered \n" +
-                        "Total closing amount " + CustomerService.GetAccountBalance(customer) +
-                        "\nPress any key to continue...");
-                    Console.ReadKey();
-                    Console.Clear();
-
+                    if(AccountHolderService.TransferFunds(accountHolder, beneficiary, amount) && TransactionService.AddTransaction(accountHolder, newDebitTransfer) && TransactionService.AddTransaction(beneficiary, newCreditTransfer))
+                    {
+                        Utilities.DisplayMessage("Amount Successfull Transfered \n" +
+                            "Total closing amount " + AccountHolderService.GetAccountBalance(accountHolder));
+                    }
+                    else
+                    {
+                        Utilities.DisplayMessage("Amount Transfer Failed \n" +
+                            "Total closing amount " + AccountHolderService.GetAccountBalance(accountHolder));
+                    }
                 }
                 else
                 {
-                    Console.WriteLine("Insufficent Funds \n" +
-                        "Press any key to continue...");
-                    Console.ReadKey();
-                    Console.Clear();
-                    CustomerMenu(bank,customer);
+                    Utilities.DisplayMessage("Insufficent Funds");
                 }
             }
             else
             {
-                Console.WriteLine("Bank does not exists");
-                CustomerMenu(bank, customer);
+                Utilities.DisplayMessage("Bank does not exists");
             }
         }
 
         public static void RevertTransaction(Bank bank)
         {
-            string transactionID = Utilities.GetStringInput("Enter Transaction ID :");
-
-            if (TransactionService.IsTransactionExists(bank,transactionID))
+            string username = Utilities.GetStringInput("Enter Username :");
+   
+            if(AccountHolderService.IsCustomerExists(bank, username))
             {
-                if (TransactionService.GetSenderUsername(bank,transactionID).Equals(TransactionService.GetBeneficiaryUsername(bank, transactionID)) )
+                AccountHolder accountHolder = AccountHolderService.GetCustomer(bank, username);
+
+                string transactionID = Utilities.GetStringInput("Enter Transaction ID :");
+                if (TransactionService.IsTransactionExists(accountHolder, transactionID))
                 {
-                    AccountHolder accountHolder = CustomerService.GetCustomer(bank, TransactionService.GetSenderUsername(bank, transactionID));
                     Transaction transaction = TransactionService.GetTransaction(accountHolder, transactionID);
 
-                    TransactionService.RevertTransaction(accountHolder, transaction);
-
-
-                }
-                else if(TransactionService.GetSrcBankID(bank,transactionID).Equals(TransactionService.GetDestBankID(bank,transactionID)) )
-                {
-                    AccountHolder accountHolder = CustomerService.GetCustomer(bank, TransactionService.GetSenderUsername(bank, transactionID));
-                    AccountHolder beneficiary = CustomerService.GetCustomer(bank, TransactionService.GetBeneficiaryUsername(bank, transactionID));
-
-                    Transaction debitTransaction = TransactionService.GetTransaction(accountHolder, transactionID);
-                    Transaction creditTransaction = TransactionService.GetTransaction(beneficiary, transactionID);
-
-                    TransactionService.RevertTransaction(accountHolder, beneficiary, debitTransaction, creditTransaction);
-
+                    if(transaction.SrcAccountNumber.Equals(transaction.DestAccountNumber))
+                    {
+                       if( TransactionService.RevertTransaction(accountHolder, transaction) )
+                        {
+                            Utilities.DisplayMessage("Transaction Successfully Reverted");
+                        }
+                       else
+                        {
+                            Utilities.DisplayMessage("Revert Transaction failed");
+                        }
+                    }
+                    else if(transaction.SrcBankID.Equals(transaction.DestBankID))
+                    {
+                        RevertTransactionSameBank(bank, accountHolder, transaction);
+                    }
+                    else
+                    {
+                        RevertTransactionOtherBank(bank, accountHolder, transaction);
+                    }
                 }
                 else
                 {
-                    AccountHolder accountHolder = CustomerService.GetCustomer(bank, TransactionService.GetSenderUsername(bank, transactionID));
-                    Transaction debitTransaction = TransactionService.GetTransaction(accountHolder, transactionID);
-
-                    Bank beneficiaryBank = BankService.GetBankThroughID(BankStore.Banks, debitTransaction.DestBankID);
-                    AccountHolder beneficiary = CustomerService.GetCustomerThroughID(beneficiaryBank, debitTransaction.DestAccountID);
-                    Transaction creditTransaction = TransactionService.GetTransaction(beneficiary, transactionID);
-
-                    TransactionService.RevertTransaction(accountHolder, beneficiary, debitTransaction, creditTransaction);
-                }
+                    Utilities.DisplayMessage("Transaction Does not exist");
+                }    
             }
             else
             {
-                Console.WriteLine("Transaction does not exists\n" +
-                    "Press any key to continue...");
-                Console.ReadKey();
-                Console.Clear();
+                Utilities.DisplayMessage("Account Holder does not exist");
+            }
+
+        }
+
+        public static void RevertTransactionSameBank(Bank bank, AccountHolder accountHolder, Transaction transaction)
+        {
+            AccountHolder beneficiary = AccountHolderService.GetCustomerThroughID(bank, transaction.DestAccountNumber);
+            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.ID);
+
+            if (TransactionService.RevertTransaction(accountHolder, transaction) && TransactionService.RevertTransaction(beneficiary, beneficiaryTransaction))
+            {
+                Utilities.DisplayMessage("Transaction Successfully Reverted");
+            }
+            else
+            {
+                Utilities.DisplayMessage("Revert Transaction failed");
+            }
+
+        }
+
+        public static void RevertTransactionOtherBank(Bank bank, AccountHolder accountHolder, Transaction transaction)
+        {
+            Bank beneficiaryBank = BankService.GetBank(BankStore.Banks, transaction.DestBankID);
+            AccountHolder beneficiary = AccountHolderService.GetCustomerThroughID(beneficiaryBank, transaction.DestAccountNumber);
+            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.ID);
+
+            if (TransactionService.RevertTransaction(accountHolder, transaction) && TransactionService.RevertTransaction(beneficiary, beneficiaryTransaction))
+            {
+                Utilities.DisplayMessage("Transaction Successfully Reverted");
+            }
+            else
+            {
+                Utilities.DisplayMessage("Revert Transaction failed");
             }
         }
     }

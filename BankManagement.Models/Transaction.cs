@@ -6,13 +6,23 @@ namespace Bank
 {
     public class Transaction
     {
-        public string SrcAccountID { get; set; }
-        public string DestAccountID { get; set; }
         public string ID { get; set; }
-        public string TransactionDate { get; set; }
-        public TransactionType TransactionType { get; set; }
+       
+        public string SrcAccountNumber { get; set; }
+        
+        public string DestAccountNumber { get; set; }       
+        
+        public TransactionType Type { get; set; }
+        
         public string SrcBankID { get; set; }
         public string DestBankID { get; set; }
+        
         public double Amount { get; set; }
+        
+        public string CreatedOn { get; set; }
+        
+        public string CreatedBy { get; set; }
+
+        public bool IsReverted { get; set; }
     }
 }

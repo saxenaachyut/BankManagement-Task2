@@ -5,7 +5,7 @@ namespace Bank
     public enum MainMenuOption
     {
         CreateNewBank = 1, 
-        LogintoExistingBank = 2, 
+        Login = 2, 
         Exit = 3
     }
 
@@ -18,9 +18,9 @@ namespace Bank
 
     public enum StaffMenuOption
     {
-        CreateNewCustomerAccount = 1,
-        UpdateCustomerAccount = 2,
-        DeleteCustomerAccount = 3,
+        CreateAccountHolder = 1,
+        UpdateAccountHolder = 2,
+        DeleteAccountHolder = 3,
         AddNewCurrency = 4,
         UpdateServiceChargeSameBank = 5,
         UpdateServiceChargeOtherBank = 6,
@@ -40,10 +40,8 @@ namespace Bank
 
     public enum TransactionType
     {
-        Deposit = 1, 
-        Withdrawl = 2, 
-        TransferDebit = 3, 
-        TransferCredit = 4
+        Credit = 1, 
+        Debit = 2, 
     }
 
     public enum ServiceCharges
