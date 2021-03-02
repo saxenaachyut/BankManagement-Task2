@@ -290,16 +290,17 @@ namespace Bank
                     return;
                 }
             }
-            AccountHolder customer = new AccountHolder();
-            customer.Name = name;
-            customer.UserName = username;
-            customer.Password = Utilities.GetStringInput("Enter Password :");
-            customer.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
-            customer.AccountNumber = customer.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-            customer.AccountBalance = 0;
-            customer.BankID = bank.ID;
+            AccountHolder accountHolder = new AccountHolder();
+            accountHolder.Name = name;
+            accountHolder.UserName = username;
+            accountHolder.Password = Utilities.GetStringInput("Enter Password :");
+            accountHolder.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
+            accountHolder.Email = Utilities.GetStringInput("Enter User Email Address");
+            accountHolder.AccountNumber = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+            accountHolder.AccountBalance = 0;
+            accountHolder.BankID = bank.ID;
 
-            if(!AccountHolderService.AddAccountHolder(bank, customer))
+            if(!AccountHolderService.AddAccountHolder(bank, accountHolder))
             {
                 Utilities.DisplayMessage("Failed to add Customer");
             }
