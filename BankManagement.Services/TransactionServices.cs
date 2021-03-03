@@ -42,19 +42,6 @@ namespace Bank
             return accountHolder.Transactions.Find(b => b.ID == transactionID);
         }
 
-        public bool AddTransaction(AccountHolder accountHolder, Transaction transaction)
-        {
-            try
-            {
-                accountHolder.Transactions.Add(transaction);
-                return true;
-            }
-            catch(Exception)
-            {
-                return false;
-            }
-        }
-
         public bool RevertTransaction(AccountHolder accountHolder, Transaction transaction)
         {
             try

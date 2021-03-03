@@ -6,12 +6,12 @@ namespace Bank
 {
     public class BankServices
     {
-        public bool IsBankExists(List<Bank> bankList, string bankName)
+        public bool IsBankExists(List<Bank> banks, string bankName)
         {
-            return bankList.Exists(b => b.Name == bankName);
+            return banks.Exists(b => b.Name == bankName);
         }
 
-        public bool AddBank(List<Bank> bankList, Bank bank)
+        public bool AddBank(List<Bank> banks, Bank bank)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace Bank
                 defaultCurrency.ExcahngeRate = Constants.DefaultExchangeRate;
                 defaultCurrency.IsDefault = true;
                 bank.Currencies.Add(defaultCurrency);
-                bankList.Add(bank);
+                banks.Add(bank);
                 return true;
             }
             catch(Exception)
@@ -35,11 +35,11 @@ namespace Bank
             }
         }
 
-        public Bank GetBank(List<Bank> bankList, string bankName)
+        public Bank GetBank(List<Bank> banks, string bankName)
         {
             try
             {
-                Bank bank = bankList.Find(b => b.Name == bankName);
+                Bank bank = banks.Find(b => b.Name == bankName);
                 return bank;
             }
 
@@ -50,11 +50,11 @@ namespace Bank
 
         }
 
-        public Bank GetBankThroughID(List<Bank> bankList, string bankID)
+        public Bank GetBankThroughID(List<Bank> banks, string bankID)
         {
             try
             {
-                Bank bank = bankList.Find(b => b.ID == bankID);
+                Bank bank = banks.Find(b => b.ID == bankID);
                 return bank;
             }
 
@@ -65,9 +65,9 @@ namespace Bank
 
         }
 
-        public Boolean IsStaffExists(Bank bank, string username)
+        public Boolean IsStaffExists(Bank banks, string username)
         {
-            return bank.Employees.Exists(b => b.UserName == username);
+            return banks.Employees.Exists(b => b.UserName == username);
         }
 
         public bool AddBankStaff(Bank bank, BankStaff bankStaff)

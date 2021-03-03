@@ -261,10 +261,6 @@ namespace Bank
                     AccountHolderMenu(bank, accountHolder);
                     break;
             }
-
-
-
-
         }
 
         public static void CreateNewAccountHolder(Bank bank)
@@ -294,9 +290,7 @@ namespace Bank
             else
             {
                 Utilities.DisplayMessage("Account Holder Successfull added");
-            }
-
-            
+            }           
         }
 
         public static void UpdateAccountHolder(Bank bank)
@@ -450,7 +444,7 @@ namespace Bank
                 IsReverted = false
             };
 
-            if(AccountHolderService.DepositAmount(accountHolder,amount) && TransactionService.AddTransaction(accountHolder, transaction))
+            if(AccountHolderService.DepositAmount(accountHolder,transaction))
             {
                 Utilities.DisplayMessage("Amount Deposited Successfully\n" +
                     "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));
@@ -466,7 +460,7 @@ namespace Bank
         {
             double amount;
             amount = Utilities.GetDoubleInput("Enter Amount to Withdraw", "Only Numbers Accepted, Enter Amount again");
-            Transaction newTransaction = new Transaction()
+            Transaction transaction = new Transaction()
             {
                 SrcAccountNumber = accountHolder.AccountNumber,
                 SrcBankID = accountHolder.BankID,
@@ -481,7 +475,7 @@ namespace Bank
 
             if (AccountHolderService.IsSufficientFundsAvailable(accountHolder,amount) )
             {
-                if(AccountHolderService.WithdrawAmount(accountHolder, amount) && TransactionService.AddTransaction(accountHolder, newTransaction))
+                if(AccountHolderService.WithdrawAmount(accountHolder, transaction))
                 {
                     Utilities.DisplayMessage("Amount Withdrawed Successfully\n" +
                         "Total Closing Amount : " + AccountHolderService.GetAccountBalance(accountHolder));

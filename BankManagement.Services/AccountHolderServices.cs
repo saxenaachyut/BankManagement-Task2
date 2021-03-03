@@ -76,11 +76,12 @@ namespace Bank
             return customer.AvailableBalance;
         }
 
-        public bool DepositAmount(AccountHolder accountHolder, double amount)
+        public bool DepositAmount(AccountHolder accountHolder, Transaction transaction)
         {
             try
             {
-                accountHolder.AvailableBalance += amount;
+                accountHolder.AvailableBalance += transaction.Amount;
+                accountHolder.Transactions.Add(transaction);
                 return true;
             }
             catch (Exception)
@@ -97,11 +98,12 @@ namespace Bank
                 return false;
         }
 
-        public bool WithdrawAmount(AccountHolder accountHolder, double amount)
+        public bool WithdrawAmount(AccountHolder accountHolder, Transaction transaction)
         {
             try
             {
-                accountHolder.AvailableBalance -= amount;
+                accountHolder.AvailableBalance -= transaction.Amount;
+                accountHolder.Transactions.Add(transaction);
                 return true;
             }
             catch (Exception)
