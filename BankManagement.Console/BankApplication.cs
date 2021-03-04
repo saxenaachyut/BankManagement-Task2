@@ -13,7 +13,8 @@ namespace Bank
             BankService = new BankServices();
             AccountHolderService = new AccountHolderServices();
             TransactionService = new TransactionServices();
-     
+
+            BackendJson.Load();
             MainMenu();
         }
 
@@ -24,7 +25,7 @@ namespace Bank
                 "---------------------------------------------------------\n" +
                 "1. Create new Bank\n" +
                 "2. Login to Existing Bank\n" +
-                "3. Exit");
+                "3. Save and Exit");
 
             MainMenu menuOption = (MainMenu)Utilities.GetIntInput();
             switch (menuOption)
@@ -86,10 +87,11 @@ namespace Bank
                     break;
 
                 case global::Bank.MainMenu.Exit:
+                    BackendJson.Save();
                     return; 
 
                 default:
-                    Console.WriteLine("Invalid Selection");
+                    Console.WriteLine("Invalid Selection");           
                     MainMenu();
                     break;
             }
@@ -253,6 +255,7 @@ namespace Bank
                     break;
 
                 case global::Bank.AccountHolderMenu.Logout:
+                    Console.Clear();
                     BankLogin(bank);
                     break;
 
