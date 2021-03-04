@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Bank
 {
-    public class TransactionServices
+    public class TransactionServices : ITransactionServices
     {
         public bool IsTransactionExists(AccountHolder accountHolder, string transactionID)
         {
@@ -15,7 +15,7 @@ namespace Bank
         {
             double totaltrasferamount = 0;
 
-            switch(bankOption)
+            switch (bankOption)
             {
                 case FundTransferOption.SameBankRTGS:
                     totaltrasferamount = amount + amount * (bank.ServiceChargeRates.SameBankRTGS / 100);
@@ -46,7 +46,7 @@ namespace Bank
         {
             try
             {
-                switch(transaction.Type)
+                switch (transaction.Type)
                 {
                     case TransactionType.Debit:
                         accountHolder.AvailableBalance += transaction.Amount;
@@ -57,11 +57,11 @@ namespace Bank
                         break;
 
                     case TransactionType.Transfer:
-                        if( transaction.SrcAccountNumber == accountHolder.AccountNumber )
+                        if (transaction.SrcAccountNumber == accountHolder.AccountNumber)
                         {
                             accountHolder.AvailableBalance += transaction.Amount;
                         }
-                        else if( transaction.DestAccountNumber == accountHolder.AccountNumber )
+                        else if (transaction.DestAccountNumber == accountHolder.AccountNumber)
                         {
                             accountHolder.AvailableBalance -= transaction.Amount;
                         }
@@ -75,11 +75,11 @@ namespace Bank
 
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
-            
+
         }
     }
 }

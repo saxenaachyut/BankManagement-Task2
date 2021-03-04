@@ -5,9 +5,9 @@ namespace Bank
 {
     public class BankApplication
     {
-        public static BankServices BankService;
-        public static AccountHolderServices AccountHolderService;
-        public static TransactionServices TransactionService;
+        public static IBankServices BankService;
+        public static IAccountHolderServices AccountHolderService;
+        public static ITransactionServices TransactionService;
         static void Main()
         {
             BankService = new BankServices();

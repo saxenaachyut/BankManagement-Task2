@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Bank
 {
-    public class BankServices
+    public class BankServices : IBankServices
     {
         public bool IsBankExists(List<Bank> banks, string bankName)
         {
@@ -29,7 +29,7 @@ namespace Bank
                 banks.Add(bank);
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -79,13 +79,13 @@ namespace Bank
                 bank.Employees.Add(bankStaff);
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
-            
+
         }
-        
+
         public BankStaff GetBankStaff(Bank bank, string username)
         {
             return bank.Employees.Find(b => b.UserName == username);
@@ -95,7 +95,7 @@ namespace Bank
         {
             return bank.Currencies.Exists(b => b.CurrencyCode == currencyCode);
         }
-          
+
         public bool AddCurrency(Bank bank, Currency currency)
         {
             try
@@ -103,7 +103,7 @@ namespace Bank
                 bank.Currencies.Add(currency);
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -132,6 +132,6 @@ namespace Bank
                 bank.ServiceChargeRates.OtherBankIMPS = newRate;
             }
         }
-      
+
     }
 }

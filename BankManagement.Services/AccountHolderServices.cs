@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Bank
 {
-    public class AccountHolderServices
+    public class AccountHolderServices : IAccountHolderServices
     {
 
         public bool IsAccountHolderExists(Bank bank, string username)
@@ -23,7 +23,7 @@ namespace Bank
                 bank.Accounts.Add(accountHolder);
                 return true;
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -68,7 +68,7 @@ namespace Bank
             {
                 return false;
             }
-            
+
         }
 
         public double GetAccountBalance(AccountHolder customer)
