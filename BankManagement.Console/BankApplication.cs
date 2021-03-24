@@ -14,7 +14,6 @@ namespace Bank
             AccountHolderService = new AccountHolderServices();
             TransactionService = new TransactionServices();
 
-            BackendJson.Load();
             MainMenu();
         }
 
@@ -87,7 +86,6 @@ namespace Bank
                     break;
 
                 case global::Bank.MainMenu.Exit:
-                    BackendJson.Save();
                     return; 
 
                 default:

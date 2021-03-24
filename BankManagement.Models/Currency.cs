@@ -6,6 +6,7 @@ namespace Bank
 {
     public class Currency
     {
+        public int ID { get; set; }
         public string Name { get; set; }
        
         public string CurrencyCode { get; set; }
