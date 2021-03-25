@@ -13,5 +13,8 @@ namespace Bank
         public double OtherBankRTGS { get; set; }
 
         public double OtherBankIMPS { get; set; }   
+
+        public int BankId { get; set; }
+        public Bank Bank { get; set; }
     }
 }

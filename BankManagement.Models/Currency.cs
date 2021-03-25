@@ -6,7 +6,7 @@ namespace Bank
 {
     public class Currency
     {
-        public int ID { get; set; }
+        public int Id { get; set; }
         public string Name { get; set; }
        
         public string CurrencyCode { get; set; }
@@ -14,6 +14,8 @@ namespace Bank
         public double ExcahngeRate { get; set; }
         
         public bool IsDefault { get; set; }
+        public int BankId { get; set; }
+        public Bank Bank { get; set; }
 
     }
 }

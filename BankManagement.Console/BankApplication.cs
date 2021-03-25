@@ -398,7 +398,7 @@ namespace Bank
             AccountHolder accountHolder = AccountHolderService.GetAccountHolder(bank, accountHolderUsername);
             foreach (Transaction transaction in accountHolder.Transactions)
             {
-                Console.WriteLine("Transaction ID - " + transaction.ID + "\n");
+                Console.WriteLine("Transaction ID - " + transaction.Id + "\n");
                 Console.WriteLine("Transaction Date - " + transaction.CreatedOn + "\n");
                 Console.WriteLine("Transaction Type - " + transaction.Type + "\n");
                 Console.WriteLine("Source Account Number - " + transaction.SrcAccountNumber + "\n");
@@ -415,7 +415,7 @@ namespace Bank
         {            
             foreach(Transaction transaction in accountHolder.Transactions)
             {
-                Console.WriteLine("Transaction ID - " + transaction.ID + "\n");
+                Console.WriteLine("Transaction ID - " + transaction.Id + "\n");
                 Console.WriteLine("Transaction Date - " + transaction.CreatedOn + "\n");
                 Console.WriteLine("Transaction Type - " + transaction.Type + "\n");
                 Console.WriteLine("Source Account Number - " + transaction.SrcAccountNumber + "\n");
@@ -438,7 +438,7 @@ namespace Bank
                 SrcBankID = accountHolder.BankID,
                 CreatedOn = DateTime.Now.ToString("f"),
                 CreatedBy = accountHolder.AccountNumber,
-                ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                Id = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
                 DestBankID = accountHolder.BankID,
                 Amount = amount,
                 Type = TransactionType.Credit,
@@ -467,7 +467,7 @@ namespace Bank
                 SrcBankID = accountHolder.BankID,
                 CreatedOn = DateTime.Now.ToString("f"),
                 CreatedBy = accountHolder.AccountNumber,
-                ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                Id = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
                 DestBankID = accountHolder.BankID,
                 Amount = amount,
                 Type = TransactionType.Debit,
@@ -567,7 +567,7 @@ namespace Bank
                     DestAccountNumber = beneficiary.AccountNumber,
                     SrcBankID = accountHolder.BankID,
                     DestBankID = beneficiary.BankID,
-                    ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                    Id = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
                     CreatedOn = DateTime.Now.ToString("f"),
                     CreatedBy = accountHolder.AccountNumber,
                     Amount = amount,
@@ -626,7 +626,7 @@ namespace Bank
                         DestAccountNumber = beneficiary.AccountNumber,
                         SrcBankID = accountHolder.BankID,
                         DestBankID = beneficiary.BankID,
-                        ID = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
+                        Id = "TXN" + accountHolder.BankID + accountHolder.AccountNumber + DateTime.Now.ToString("ddMMyyyy"),
                         CreatedOn = DateTime.Now.ToString("f"),
                         CreatedBy = accountHolder.AccountNumber,
                         Amount = amount,
@@ -704,7 +704,7 @@ namespace Bank
         public static void RevertTransactionSameBank(Bank bank, AccountHolder accountHolder, Transaction transaction)
         {
             AccountHolder beneficiary = AccountHolderService.GetAccountHolderThroughID(bank, transaction.DestAccountNumber);
-            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.ID);
+            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.Id);
 
             if (TransactionService.RevertTransaction(accountHolder, transaction) && TransactionService.RevertTransaction(beneficiary, beneficiaryTransaction))
             {
@@ -721,7 +721,7 @@ namespace Bank
         {
             Bank beneficiaryBank = BankService.GetBank(BankStore.Banks, transaction.DestBankID);
             AccountHolder beneficiary = AccountHolderService.GetAccountHolderThroughID(beneficiaryBank, transaction.DestAccountNumber);
-            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.ID);
+            Transaction beneficiaryTransaction = TransactionService.GetTransaction(beneficiary, transaction.Id);
 
             if (TransactionService.RevertTransaction(accountHolder, transaction) && TransactionService.RevertTransaction(beneficiary, beneficiaryTransaction))
             {

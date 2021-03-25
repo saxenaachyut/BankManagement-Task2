@@ -6,15 +6,20 @@ namespace Bank
 {
     public class Transaction
     {
-        public string ID { get; set; }
+        public int Id { get; set; }
+        public string TransactionUId { get; set; }
        
         public string SrcAccountNumber { get; set; }
+        public AccountHolder SrcAccountHolder { get; set; }
         
         public string DestAccountNumber { get; set; }       
         
         public TransactionType Type { get; set; }
         
         public string SrcBankID { get; set; }
+
+        public Bank Bank { get; set; }
+
         public string DestBankID { get; set; }
         
         public double Amount { get; set; }

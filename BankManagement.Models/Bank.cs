@@ -1,4 +1,4 @@
-﻿    using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,7 +14,8 @@ namespace Bank
             this.ServiceChargeRates = new ServiceChargeRates();
         }
 
-        public string ID { get; set; }
+        public int Id { get; set; }
+        public string BankUId { get; set; }
 
         public string Name { get; set; }
         public ServiceChargeRates ServiceChargeRates {get; set;}

@@ -15,7 +15,7 @@ namespace Bank
         {
             try
             {
-                bank.ID = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bank.Id = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                 bank.ServiceChargeRates.SameBankRTGS = 0;
                 bank.ServiceChargeRates.SameBankIMPS = 5;
                 bank.ServiceChargeRates.OtherBankRTGS = 2;

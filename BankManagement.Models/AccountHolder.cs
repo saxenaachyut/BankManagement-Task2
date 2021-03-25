@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bank
 {
@@ -9,15 +10,10 @@ namespace Bank
         {
             this.Transactions = new List<Transaction>();
         }
-
-        public int ID { get; set; }
-
         public string AccountNumber { get; set; }
        
         public double AvailableBalance { get; set; }
 
-        public string BankID { get; set; }
-        
         public List<Transaction> Transactions {get; set;}
     }
 }
