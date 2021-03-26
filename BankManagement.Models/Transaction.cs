@@ -10,15 +10,19 @@ namespace Bank
         public string TransactionUId { get; set; }
        
         public string SrcAccountNumber { get; set; }
+
+        public int AccountHolderId { get; set; }
         public AccountHolder SrcAccountHolder { get; set; }
         
         public string DestAccountNumber { get; set; }       
         
         public TransactionType Type { get; set; }
-        
-        public string SrcBankID { get; set; }
+
+        public int BankId { get; set; }
 
         public Bank Bank { get; set; }
+
+        public string SrcBankID { get; set; }
 
         public string DestBankID { get; set; }
         

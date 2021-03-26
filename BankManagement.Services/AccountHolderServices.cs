@@ -18,7 +18,7 @@ namespace Bank
             {
                 accountHolder.AccountNumber = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                 accountHolder.AvailableBalance = 0;
-                accountHolder.BankID = bank.ID;
+                accountHolder.BankId = bank.Id;
 
                 bank.Accounts.Add(accountHolder);
                 return true;

@@ -6,9 +6,9 @@ namespace Bank
 {
     public class TransactionServices : ITransactionServices
     {
-        public bool IsTransactionExists(AccountHolder accountHolder, string transactionID)
+        public bool IsTransactionExists(AccountHolder accountHolder, string transactionUID)
         {
-            return accountHolder.Transactions.Exists(b => b.ID == transactionID);
+            return accountHolder.Transactions.Exists(b => b.TransactionUId == transactionUID);
         }
 
         public double GetTrasferAmount(Bank bank, FundTransferOption bankOption, double amount)
@@ -37,9 +37,9 @@ namespace Bank
             return totaltrasferamount;
         }
 
-        public Transaction GetTransaction(AccountHolder accountHolder, string transactionID)
+        public Transaction GetTransaction(AccountHolder accountHolder, string transactionUID)
         {
-            return accountHolder.Transactions.Find(b => b.ID == transactionID);
+            return accountHolder.Transactions.Find(b => b.TransactionUId == transactionUID);
         }
 
         public bool RevertTransaction(AccountHolder accountHolder, Transaction transaction)

@@ -15,7 +15,7 @@ namespace Bank
         {
             try
             {
-                bank.Id = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bank.BankUId = bank.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                 bank.ServiceChargeRates.SameBankRTGS = 0;
                 bank.ServiceChargeRates.SameBankIMPS = 5;
                 bank.ServiceChargeRates.OtherBankRTGS = 2;
@@ -54,7 +54,7 @@ namespace Bank
         {
             try
             {
-                Bank bank = banks.Find(b => b.ID == bankID);
+                Bank bank = banks.Find(b => b.BankUId == bankID);
                 return bank;
             }
 
