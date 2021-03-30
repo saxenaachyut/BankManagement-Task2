@@ -18,6 +18,7 @@ namespace Bank
         public string Email { get; set; }
 
         public int BankId { get; set; }
+        public string BankUId { get; set; }
 
         public Bank Bank { get; set; }
     }

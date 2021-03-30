@@ -6,6 +6,7 @@ namespace Bank
 {
     public class ServiceChargeRates
     {
+        public int Id { get; set; }
         public double SameBankRTGS { get; set; }
 
         public double SameBankIMPS { get; set; }
