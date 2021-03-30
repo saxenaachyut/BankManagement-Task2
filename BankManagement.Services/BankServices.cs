@@ -95,7 +95,7 @@ namespace Bank
 
         public bool IsStaffExists(BankContext bankContext, int bankID, string username)
         {
-            var exists =  bankContext.Employees.Where(b => b.UserName == username && b.BankId == bankID);
+            var exists =  bankContext.Employees.Where(b => b.UserName == username && b.BankId == bankID).FirstOrDefault<BankStaff>();
             if (exists != null)
                 return true;
             else

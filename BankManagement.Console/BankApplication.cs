@@ -127,7 +127,6 @@ namespace Bank
             else if (username.ToLower().Equals("exit"))
             {
                 System.Console.Clear();
-                System.Console.WriteLine("In-Exit");
                 await MainMenu();
             }
             else
