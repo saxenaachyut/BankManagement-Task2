@@ -17,9 +17,9 @@ namespace Bank
         public string DestAccountNumber { get; set; }       
         
         public TransactionType Type { get; set; }
-        public string SrcBankID { get; set; }
+        public int SrcBankID { get; set; }
 
-        public string DestBankID { get; set; }
+        public int DestBankID { get; set; }
         
         public double Amount { get; set; }
         

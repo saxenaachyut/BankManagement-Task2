@@ -1,33 +1,48 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Bank
 {
     public class TransactionServices : ITransactionServices
     {
-        public bool IsTransactionExists(AccountHolder accountHolder, string transactionUID)
+        public BankContext BankContext { get; set; }
+
+        public TransactionServices()
         {
-            return accountHolder.Transactions.Exists(b => b.TransactionUId == transactionUID);
+            this.BankContext = new BankContext();
+        }
+        public bool IsTransactionExists(string transactionUID)
+        {
+            var transaction = BankContext.Transactions.FirstOrDefault(b => b.TransactionUId == transactionUID);
+            if (transaction != null)
+                return true;
+            else
+                return false;
+
         }
 
-        public double GetTrasferAmount(Bank bank, FundTransferOption bankOption, double amount)
+        public double GetTrasferAmount(int bankId, FundTransferOption bankOption, double amount)
         {
             double totaltrasferamount = 0;
+            var serviceCharge = BankContext.ServiceCharges.FirstOrDefault(b => b.BankId == bankId);
 
             switch (bankOption)
             {
                 case FundTransferOption.SameBankRTGS:
-                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.SameBankRTGS / 100);
+
+                    totaltrasferamount = amount + amount * (serviceCharge.SameBankRTGS / 100);
                     break;
                 case FundTransferOption.SameBankIMPS:
-                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.SameBankIMPS / 100);
+                    totaltrasferamount = amount + amount * (serviceCharge.SameBankIMPS / 100);
                     break;
                 case FundTransferOption.OtherBankRTGS:
-                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.OtherBankRTGS / 100);
+                    totaltrasferamount = amount + amount * (serviceCharge.OtherBankRTGS / 100);
                     break;
                 case FundTransferOption.OtherBankIMPS:
-                    totaltrasferamount = amount + amount * (bank.ServiceChargeRates.OtherBankIMPS / 100);
+                    totaltrasferamount = amount + amount * (serviceCharge.OtherBankIMPS / 100);
                     break;
                 default:
                     break;
@@ -37,13 +52,16 @@ namespace Bank
             return totaltrasferamount;
         }
 
-        public Transaction GetTransaction(AccountHolder accountHolder, string transactionUID)
+        public Transaction GetTransaction(string transactionUId)
         {
-            return accountHolder.Transactions.Find(b => b.TransactionUId == transactionUID);
+            var transaction = BankContext.Transactions.Where(b => b.TransactionUId == transactionUId).FirstOrDefault<Transaction>();
+            return transaction;
         }
 
-        public bool RevertTransaction(AccountHolder accountHolder, Transaction transaction)
+        public async Task RevertTransaction(string transactionUId)
         {
+            var transaction = GetTransaction(transactionUId);
+            var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.SrcAccountNumber);
             try
             {
                 switch (transaction.Type)
@@ -57,27 +75,21 @@ namespace Bank
                         break;
 
                     case TransactionType.Transfer:
-                        if (transaction.SrcAccountNumber == accountHolder.AccountNumber)
-                        {
-                            accountHolder.AvailableBalance += transaction.Amount;
-                        }
-                        else if (transaction.DestAccountNumber == accountHolder.AccountNumber)
-                        {
-                            accountHolder.AvailableBalance -= transaction.Amount;
-                        }
-                        break;
+                        var beneficiary = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.DestAccountNumber);
 
+                        accountHolder.AvailableBalance += transaction.Amount;
+                        beneficiary.AvailableBalance -= transaction.Amount;
+                        break;
                     default:
-                        return false;
+                        break;
                 }
 
                 transaction.IsReverted = true;
 
-                return true;
+                _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)
             {
-                return false;
             }
 
         }

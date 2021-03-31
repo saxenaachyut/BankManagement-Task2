@@ -1,19 +1,25 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Bank
 {
     public interface IBankServices
     {
-        bool AddBank(List<Bank> banks, Bank bank);
-        bool AddBankStaff(Bank bank, BankStaff bankStaff);
-        bool AddCurrency(Bank bank, Currency currency);
-        Bank GetBank(List<Bank> banks, string bankName);
-        BankStaff GetBankStaff(Bank bank, string username);
-        Bank GetBankThroughID(List<Bank> banks, string bankID);
-        bool IsBankExists(List<Bank> banks, string bankName);
-        bool IsCurrencyExists(Bank bank, string currencyCode);
-        bool IsStaffExists(Bank banks, string username);
-        void SetOtherBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType);
-        void SetSameBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType);
+        BankContext BankContext { get; set; }
+
+        Task AddBank(string bankName);
+        Task AddBankStaff(BankStaff bankStaff);
+        Task AddCurrency(int bankId, Currency currency);
+        Task<Bank> GetBank(int bankId);
+        Task<Bank> GetBank(string bankName);
+        Task<int> GetBankCount();
+        Task<int> GetBankID(string bankName);
+        Task<List<Bank>> GetBankList();
+        Task<BankStaff> GetBankStaff(int bankId, string username);
+        bool IsBankExists(string bankName);
+        bool IsCurrencyExists(int bankId, string currencyCode);
+        bool IsStaffExists(int bankID, string username);
+        Task SetOtherBankRate(int bankId, double newRate, ServiceCharges serviceChargeType);
+        Task SetSameBankRate(int bankId, double newRate, ServiceCharges serviceChargeType);
     }
 }

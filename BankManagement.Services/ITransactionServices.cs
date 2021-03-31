@@ -1,10 +1,14 @@
-﻿namespace Bank
+﻿using System.Threading.Tasks;
+
+namespace Bank
 {
     public interface ITransactionServices
     {
-        Transaction GetTransaction(AccountHolder accountHolder, string transactionID);
-        double GetTrasferAmount(Bank bank, FundTransferOption bankOption, double amount);
-        bool IsTransactionExists(AccountHolder accountHolder, string transactionID);
-        bool RevertTransaction(AccountHolder accountHolder, Transaction transaction);
+        BankContext BankContext { get; set; }
+
+        Transaction GetTransaction(string transactionUId);
+        double GetTrasferAmount(int bankId, FundTransferOption bankOption, double amount);
+        bool IsTransactionExists(string transactionUID);
+        Task RevertTransaction(string transactionUId);
     }
 }

@@ -44,16 +44,6 @@ namespace Bank
             Console.ReadKey();
             Console.Clear();
         }
-
-        public static void DisplayBankList(List<Bank> banks)
-        {
-            int i = 1;
-            foreach(Bank bank in banks)
-            {
-                Console.WriteLine((i++) + ". " + bank.Name + "\n");
-            }
-        }
-
     }
 }
 

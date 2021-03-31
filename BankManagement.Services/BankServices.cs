@@ -7,25 +7,32 @@ using System.Threading.Tasks;
 
 namespace Bank
 {
-    public class BankServices
+    public class BankServices : IBankServices
     {
-        public bool IsBankExists(BankContext bankContext, string bankName)
+        public BankContext BankContext { get; set; }
+
+        public BankServices()
         {
-            var exists = bankContext.Banks.Where(b => b.Name == bankName).FirstOrDefault<Bank>();
+            this.BankContext = new BankContext();
+        }
+
+        public bool IsBankExists(string bankName)
+        {
+            var exists = BankContext.Banks.Where(b => b.Name == bankName).FirstOrDefault<Bank>();
             if (exists != null)
                 return true;
             else
                 return false;
         }
 
-        public async Task AddBank(BankContext bankContext, string bankName)
+        public async Task AddBank(string bankName)
         {
             try
             {
                 string bankUid = bankName.Substring(0, 3) + System.DateTime.Now.ToString("ddmmyyyy");
                 var bank = new Bank { BankUId = bankUid, Name = bankName };
-                
-                bankContext.Banks.Add(bank);
+
+                BankContext.Banks.Add(bank);
 
                 var serviceCharge = new ServiceChargeRates
                 {
@@ -47,21 +54,21 @@ namespace Bank
                     Bank = bank
                 };
 
-                bankContext.ServiceCharges.Add(serviceCharge);
-                bankContext.Currencies.Add(currency);
-                _ = await bankContext.SaveChangesAsync();
+                BankContext.ServiceCharges.Add(serviceCharge);
+                BankContext.Currencies.Add(currency);
+                _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)
             {
             }
         }
 
-        public Bank GetBank(List<Bank> banks, string bankName)
+        public async Task<Bank> GetBank(string bankName)
         {
             try
             {
-                Bank bank = banks.Find(b => b.Name == bankName);
-                return bank;
+                var bank = await BankContext.Banks.Where(b => b.Name == bankName).ToListAsync();
+                return bank[0];
             }
 
             catch (Exception)
@@ -71,12 +78,12 @@ namespace Bank
 
         }
 
-        public Bank GetBankThroughID(List<Bank> banks, string bankID)
+        public async Task<Bank> GetBank(int bankId)
         {
             try
             {
-                Bank bank = banks.Find(b => b.BankUId == bankID);
-                return bank;
+                var bank = await BankContext.Banks.Where(b => b.Id == bankId).ToListAsync();
+                return bank[0];
             }
 
             catch (Exception)
@@ -86,82 +93,109 @@ namespace Bank
 
         }
 
-        public async Task<int> GetBankID(BankContext bankContext, string bankName)
+        public async Task<int> GetBankCount()
         {
-            var banks = await bankContext.Banks.Where(b => b.Name == bankName).ToListAsync();
+            var banks = await BankContext.Banks.ToListAsync();
+            return banks.Count;
+        }
+
+        public async Task<List<Bank>> GetBankList()
+        {
+            var banks = await BankContext.Banks.ToListAsync();
+            return banks;
+        }
+
+        public async Task<int> GetBankID(string bankName)
+        {
+            var banks = await BankContext.Banks.Where(b => b.Name == bankName).ToListAsync();
             return banks[0].Id;
         }
 
 
-        public bool IsStaffExists(BankContext bankContext, int bankID, string username)
+        public bool IsStaffExists(int bankID, string username)
         {
-            var exists =  bankContext.Employees.Where(b => b.UserName == username && b.BankId == bankID).FirstOrDefault<BankStaff>();
+            var exists = BankContext.Employees.Where(b => b.UserName == username && b.BankId == bankID).FirstOrDefault<BankStaff>();
             if (exists != null)
                 return true;
             else
                 return false;
-
         }
 
-        public async Task AddBankStaff(BankContext bankContext, BankStaff bankStaff)
+        public async Task AddBankStaff(BankStaff bankStaff)
         {
             try
             {
+                var count = await BankContext.Employees.Where(b => b.BankId == bankStaff.BankId).ToListAsync();
+                bankStaff.EmployeeID = (count.Count + 1).ToString();
                 bankStaff.AccountNumber = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-                bankContext.Employees.Add(bankStaff);
-                _ = await bankContext.SaveChangesAsync();
+                BankContext.Employees.Add(bankStaff);
+                _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)
             {
-            }   
+            }
         }
 
-        public async Task<BankStaff> GetBankStaff(BankContext bankContext, int bankId, string username)
+        public async Task<BankStaff> GetBankStaff(int bankId, string username)
         {
-            var staff = await bankContext.Employees.Where(b => b.UserName == username && b.BankId == bankId).ToListAsync();
+            var staff = await BankContext.Employees.Where(b => b.UserName == username && b.BankId == bankId).ToListAsync();
             return staff[0];
         }
 
-        public Boolean IsCurrencyExists(Bank bank, string currencyCode)
+        public bool IsCurrencyExists(int bankId, string currencyCode)
         {
-            return bank.Currencies.Exists(b => b.CurrencyCode == currencyCode);
+            var exists = BankContext.Currencies.Where(b => b.CurrencyCode == currencyCode && b.BankId == bankId).FirstOrDefault<Currency>();
+            if (exists != null)
+                return true;
+            else
+                return false;
         }
 
-        public bool AddCurrency(Bank bank, Currency currency)
+
+
+        public async Task AddCurrency(int bankId, Currency currency)
         {
             try
             {
-                bank.Currencies.Add(currency);
-                return true;
+                BankContext.Currencies.Add(currency);
+                _ = await BankContext.SaveChangesAsync();
+
             }
             catch (Exception)
             {
-                return false;
             }
         }
 
-        public void SetSameBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType)
+        public async Task SetSameBankRate(int bankId, double newRate, ServiceCharges serviceChargeType)
         {
+            var serviceCharge = BankContext.ServiceCharges.SingleOrDefault(b => b.BankId == bankId);
+
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                bank.ServiceChargeRates.SameBankRTGS = newRate;
+                serviceCharge.SameBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                bank.ServiceChargeRates.SameBankIMPS = newRate;
+                serviceCharge.SameBankIMPS = newRate;
             }
+
+            _ = await BankContext.SaveChangesAsync();
         }
 
-        public void SetOtherBankRate(Bank bank, double newRate, ServiceCharges serviceChargeType)
+        public async Task SetOtherBankRate(int bankId, double newRate, ServiceCharges serviceChargeType)
         {
+            var serviceCharge = BankContext.ServiceCharges.SingleOrDefault(b => b.BankId == bankId);
+
             if (serviceChargeType == ServiceCharges.RTGS)
             {
-                bank.ServiceChargeRates.OtherBankRTGS = newRate;
+                serviceCharge.OtherBankRTGS = newRate;
             }
             else if (serviceChargeType == ServiceCharges.IMPS)
             {
-                bank.ServiceChargeRates.OtherBankIMPS = newRate;
+                serviceCharge.OtherBankIMPS = newRate;
             }
+
+            _ = await BankContext.SaveChangesAsync();
         }
 
     }
