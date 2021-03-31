@@ -3,20 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Autofac;
 
 namespace Bank
 {
     public class BankApplication
     {
-        public static IBankServices BankService;
-        public static IAccountHolderServices AccountHolderService;
-        public static ITransactionServices TransactionService;
         static async Task Main()
         {
-            BankService = new BankServices();
-            AccountHolderService = new AccountHolderServices();
-            TransactionService = new TransactionServices();
+            var container = ContainerConfig.Configure();
 
+            var BankService = container.Resolve<IBankServices>();
+            var AccountHolderService = container.Resolve<IBankServices>();
+            var TransactionService = container.Resolve<IBankServices>();
+            
             await MainMenu();
         }
 
