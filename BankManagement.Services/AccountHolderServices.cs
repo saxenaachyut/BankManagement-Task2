@@ -152,7 +152,7 @@ namespace Bank
 
         public async Task<List<Transaction>> GetTransactions(int accountHolderId)
         {
-            var transactions = await BankContext.Transactions.Where(b => b.Id == accountHolderId).ToListAsync();
+            var transactions = await BankContext.Transactions.Where(b => b.AccountHolderId == accountHolderId).ToListAsync();
             return transactions;
         }
 

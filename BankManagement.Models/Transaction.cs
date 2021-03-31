@@ -12,7 +12,6 @@ namespace Bank
         public string SrcAccountNumber { get; set; }
 
         public int AccountHolderId { get; set; }
-        public AccountHolder SrcAccountHolder { get; set; }
         
         public string DestAccountNumber { get; set; }       
         
