@@ -5,8 +5,6 @@ namespace Bank
 {
     public interface IAccountHolderServices
     {
-        BankContext BankContext { get; set; }
-
         Task AddAccountHolder(int bankId, AccountHolder accountHolder);
         Task ChangePassword(int bankId, string username, string newPassword);
         Task DepositAmount(Transaction transaction);

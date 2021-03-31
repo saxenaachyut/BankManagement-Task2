@@ -9,7 +9,7 @@ namespace Bank
 {
     public class AccountHolderServices : IAccountHolderServices
     {
-        public BankContext BankContext { get; set; }
+        BankContext BankContext { get; set; }
 
         public AccountHolderServices()
         {
@@ -141,7 +141,7 @@ namespace Bank
 
                 var beneficiary = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.DestAccountNumber);
                 beneficiary.AvailableBalance += transaction.Amount;
-  
+
                 _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)

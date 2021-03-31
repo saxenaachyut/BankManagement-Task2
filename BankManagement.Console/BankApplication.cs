@@ -9,13 +9,16 @@ namespace Bank
 {
     public class BankApplication
     {
+        public static IBankServices BankService;
+        public static IAccountHolderServices AccountHolderService;
+        public static ITransactionServices TransactionService;
         static async Task Main()
         {
-            var container = ContainerConfig.Configure();
+            var Container = ContainerConfig.Configure();
 
-            var BankService = container.Resolve<IBankServices>();
-            var AccountHolderService = container.Resolve<IBankServices>();
-            var TransactionService = container.Resolve<IBankServices>();
+            BankService = Container.Resolve<IBankServices>();
+            AccountHolderService = Container.Resolve<IAccountHolderServices>();
+            TransactionService = Container.Resolve<ITransactionServices>();
             
             await MainMenu();
         }
