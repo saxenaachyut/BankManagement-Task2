@@ -13,16 +13,19 @@ namespace Bank
         {
             var container = ContainerConfig.Configure();
 
-            var app = container.Resolve<IBankApplication>();
-            await app.MainMenu();
+            using (var scope = container.BeginLifetimeScope())
+            {
+                var app = scope.Resolve<IBankApplication>();
+                await app.MainMenu();
+            }
 
         }
     }
     public class BankApplication : IBankApplication
     {
-        IBankServices BankService { get; set; }
-        IAccountHolderServices AccountHolderService { get; set; }
-        ITransactionServices TransactionService { get; set; }
+        public IBankServices BankService { get; set; }
+        public IAccountHolderServices AccountHolderService { get; set; }
+        public ITransactionServices TransactionService { get; set; }
 
         public BankApplication(IBankServices bankService, IAccountHolderServices accountHolderService, ITransactionServices transactionService)
         {
@@ -84,7 +87,7 @@ namespace Bank
             admin.UserName = Utilities.GetStringInput("Enter Username for Admin account :");
             admin.Email = Utilities.GetStringInput("Enter Email Address for Admin account :");
             admin.Password = Utilities.GetStringInput("Enter password for Admin Account :");
-            admin.BankId = await BankService.GetBankID(bankName);
+            admin.BankId = BankService.GetBankID(bankName);
 
             await BankService.AddBankStaff(admin);
             System.Console.WriteLine("Admin Added");
@@ -437,7 +440,7 @@ namespace Bank
                 SrcBankID = accountHolder.BankId,
                 CreatedOn = DateTime.Now.ToString("f"),
                 CreatedBy = accountHolder.Id,
-                Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyy"),
+                Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyyhhmmss"),
                 DestBankID = accountHolder.BankId,
                 Amount = amount,
                 Type = TransactionType.Credit
@@ -458,7 +461,7 @@ namespace Bank
                 SrcBankID = accountHolder.BankId,
                 CreatedOn = DateTime.Now.ToString("f"),
                 CreatedBy = accountHolder.Id,
-                Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyy"),
+                Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyyhhmmss"),
                 DestBankID = accountHolder.BankId,
                 Amount = amount,
                 Type = TransactionType.Debit
@@ -550,7 +553,7 @@ namespace Bank
                     DestAccountNumber = beneficiary.Id,
                     SrcBankID = accountHolder.BankId,
                     DestBankID = beneficiary.BankId,
-                    Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyy"),
+                    Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyyhhmmss"),
                     CreatedOn = DateTime.Now.ToString("f"),
                     CreatedBy = accountHolder.Id,
                     Amount = amount,
@@ -602,7 +605,7 @@ namespace Bank
                         DestAccountNumber = beneficiary.Id,
                         SrcBankID = accountHolder.BankId,
                         DestBankID = beneficiary.BankId,
-                        Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyy"),
+                        Id = "TXN" + accountHolder.BankId + accountHolder.Id + DateTime.Now.ToString("ddMMyyyyhhmmss"),
                         CreatedOn = DateTime.Now.ToString("f"),
                         CreatedBy = accountHolder.Id,
                         Amount = amount,

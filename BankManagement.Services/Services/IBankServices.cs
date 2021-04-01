@@ -12,7 +12,7 @@ namespace Bank
         Task AddCurrency(Currency currency);
         Task<Bank> GetBank(string bankName);
         Task<int> GetBankCount();
-        Task<string> GetBankID(string bankName);
+        string GetBankID(string bankName);
         Task<List<Bank>> GetBankList();
         BankStaff GetBankStaff(string bankId, string username);
         Task<Bank> GetBankThroughID(string bankId);

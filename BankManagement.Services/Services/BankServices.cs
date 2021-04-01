@@ -29,20 +29,18 @@ namespace Bank
         {
             try
             {
-                string bankUid = bankName.Substring(0, 3) + System.DateTime.Now.ToString("ddmmyyyy");
-                var bank = new Bank { Id = bankUid, Name = bankName };
+                string Id = bankName.Substring(0, 3) + System.DateTime.Now.ToString("ddMMyyyyhhmmss");
+                var bank = new Bank { Id = Id, Name = bankName };
 
-                BankContext.Banks.Add(bank);
-
-                var serviceCharge = new ServiceChargeRates
+                bank.ServiceChargeRates = new ServiceChargeRates
                 {
                     SameBankRTGS = 0,
                     SameBankIMPS = 5,
                     OtherBankRTGS = 2,
-                    OtherBankIMPS = 6,
-                    BankId = bank.Id,
-                    Bank = bank
+                    OtherBankIMPS = 6
                 };
+
+                BankContext.Banks.Add(bank);
 
                 var currency = new Currency()
                 {
@@ -54,7 +52,7 @@ namespace Bank
                     Bank = bank
                 };
 
-                BankContext.ServiceCharges.Add(serviceCharge);
+
                 BankContext.Currencies.Add(currency);
                 _ = await BankContext.SaveChangesAsync();
             }
@@ -105,10 +103,10 @@ namespace Bank
             return banks;
         }
 
-        public async Task<string> GetBankID(string bankName)
+        public string GetBankID(string bankName)
         {
-            var banks = await BankContext.Banks.Where(b => b.Name == bankName).ToListAsync();
-            return banks[0].Id;
+            var bank = BankContext.Banks.FirstOrDefault(b => b.Name == bankName);
+            return bank.Id;
         }
 
 
@@ -127,7 +125,7 @@ namespace Bank
             {
                 var count = await BankContext.Users.Where(b => b.BankId == bankStaff.BankId).ToListAsync();
                 bankStaff.EmployeeID = (count.Count + 1).ToString();
-                bankStaff.Id = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bankStaff.Id = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyyhhmmss");
                 bankStaff.UserType = UserType.Staff;
 
                 BankContext.Users.Add(bankStaff);
