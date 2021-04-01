@@ -3,14 +3,16 @@ using Bank;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Bank.Console.Migrations
 {
     [DbContext(typeof(BankContext))]
-    partial class BankContextModelSnapshot : ModelSnapshot
+    [Migration("20210401055644_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +40,10 @@ namespace Bank.Console.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("BankId")
+                    b.Property<int>("BankId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BankId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("CurrencyCode")
@@ -55,7 +60,7 @@ namespace Bank.Console.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BankId");
+                    b.HasIndex("BankId1");
 
                     b.ToTable("Currencies");
                 });
@@ -96,7 +101,10 @@ namespace Bank.Console.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AccountHolderId")
+                    b.Property<int>("AccountHolderId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("AccountHolderId1")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<double>("Amount")
@@ -111,21 +119,21 @@ namespace Bank.Console.Migrations
                     b.Property<string>("DestAccountNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("DestBankID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DestBankID")
+                        .HasColumnType("int");
 
                     b.Property<string>("SrcAccountNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SrcBankID")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("SrcBankID")
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AccountHolderId");
+                    b.HasIndex("AccountHolderId1");
 
                     b.ToTable("Transactions");
                 });
@@ -196,7 +204,7 @@ namespace Bank.Console.Migrations
                 {
                     b.HasOne("Bank.Bank", "Bank")
                         .WithMany("Currencies")
-                        .HasForeignKey("BankId");
+                        .HasForeignKey("BankId1");
                 });
 
             modelBuilder.Entity("Bank.ServiceChargeRates", b =>
@@ -210,7 +218,7 @@ namespace Bank.Console.Migrations
                 {
                     b.HasOne("Bank.AccountHolder", null)
                         .WithMany("Transactions")
-                        .HasForeignKey("AccountHolderId");
+                        .HasForeignKey("AccountHolderId1");
                 });
 
             modelBuilder.Entity("Bank.AccountHolder", b =>

@@ -35,7 +35,14 @@ namespace Bank
     {
         Credit = 1, 
         Debit = 2, 
-        Transfer = 3
+        Transfer = 3,
+        Reverted = 4
+    }
+
+    public enum UserType
+    {
+        AccountHolder = 1,
+        Staff = 2
     }
 
     public enum ServiceCharges

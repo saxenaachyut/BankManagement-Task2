@@ -16,24 +16,24 @@ namespace Bank
             this.BankContext = new BankContext();
         }
 
-        public bool IsAccountHolderExists(int bankId, string username)
+        public bool IsAccountHolderExists(string bankId, string username)
         {
-            var exists = BankContext.AccountHolders.Where(b => b.UserName == username && b.BankId == bankId).FirstOrDefault<AccountHolder>();
+            var exists = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankId);
             if (exists != null)
                 return true;
             else
                 return false;
         }
 
-        public async Task AddAccountHolder(int bankId, AccountHolder accountHolder)
+        public async Task AddAccountHolder(string bankId, AccountHolder accountHolder)
         {
             try
             {
-                accountHolder.AccountNumber = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                accountHolder.Id = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                 accountHolder.AvailableBalance = 0;
                 accountHolder.BankId = bankId;
 
-                BankContext.AccountHolders.Add(accountHolder);
+                BankContext.Users.Add(accountHolder);
                 _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)
@@ -41,12 +41,13 @@ namespace Bank
             }
         }
 
-        public AccountHolder GetAccountHolder(int bankId, string username)
+        public AccountHolder GetAccountHolder(string bankId, string username)
         {
             try
             {
-                var accountHolders = BankContext.AccountHolders.SingleOrDefault(b => b.UserName == username && b.BankId == bankId);
-                return accountHolders;
+                var accountHolders = BankContext.Users.SingleOrDefault(b => b.UserName == username && b.BankId == bankId);
+
+                return (AccountHolder)accountHolders;
             }
 
             catch (Exception)
@@ -55,12 +56,12 @@ namespace Bank
             }
         }
 
-        public AccountHolder GetAccountHolderThroughID(int bankId, string accountID)
+        public AccountHolder GetAccountHolderThroughID(string bankId, string accountID)
         {
             try
             {
-                var accountHolders = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == accountID && b.BankId == bankId);
-                return accountHolders;
+                var accountHolders = BankContext.Users.SingleOrDefault(b => b.Id == accountID && b.BankId == bankId);
+                return (AccountHolder)accountHolders;
             }
 
             catch (Exception)
@@ -69,12 +70,12 @@ namespace Bank
             }
         }
 
-        public async Task RemoveAccountHolder(int bankId, string username)
+        public async Task RemoveAccountHolder(string bankId, string username)
         {
             try
             {
-                var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.UserName == username && b.BankId == bankId);
-                BankContext.AccountHolders.Remove(accountHolder);
+                var accountHolder = BankContext.Users.SingleOrDefault(b => b.UserName == username && b.BankId == bankId);
+                BankContext.Users.Remove(accountHolder);
                 _ = await BankContext.SaveChangesAsync();
 
             }
@@ -84,10 +85,11 @@ namespace Bank
 
         }
 
-        public async Task<double> GetAccountBalance(int bankId, int accountHolderId)
+        public async Task<double> GetAccountBalance(string bankId, string accountHolderId)
         {
-            var accountHolder = await BankContext.AccountHolders.Where(b => b.Id == accountHolderId && b.BankId == bankId).ToListAsync();
-            return accountHolder[0].AvailableBalance;
+            var user = await BankContext.Users.Where(b => b.Id == accountHolderId && b.BankId == bankId).ToListAsync();
+            var accountHolder = (AccountHolder)user[0];
+            return accountHolder.AvailableBalance;
         }
         public async Task DepositAmount(Transaction transaction)
         {
@@ -95,7 +97,8 @@ namespace Bank
             {
                 BankContext.Transactions.Add(transaction);
 
-                var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.Id == transaction.AccountHolderId);
+                var user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.SrcAccountNumber);
+                var accountHolder = (AccountHolder)user;
                 accountHolder.AvailableBalance += transaction.Amount;
 
                 _ = await BankContext.SaveChangesAsync();
@@ -105,9 +108,11 @@ namespace Bank
             }
         }
 
-        public bool IsSufficientFundsAvailable(int accountHolderId, double amount)
+        public bool IsSufficientFundsAvailable(string accountHolderId, double amount)
         {
-            var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.Id == accountHolderId);
+            var user = BankContext.Users.SingleOrDefault(b => b.Id == accountHolderId);
+            var accountHolder = (AccountHolder)user;
+
             if (accountHolder.AvailableBalance > amount)
                 return true;
             else
@@ -119,7 +124,9 @@ namespace Bank
             try
             {
                 BankContext.Transactions.Add(transaction);
-                var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.Id == transaction.AccountHolderId);
+                var user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.SrcAccountNumber);
+                var accountHolder = (AccountHolder)user;
+
                 accountHolder.AvailableBalance -= transaction.Amount;
 
                 _ = await BankContext.SaveChangesAsync();
@@ -136,10 +143,14 @@ namespace Bank
             {
                 BankContext.Transactions.Add(transaction);
 
-                var sender = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.SrcAccountNumber);
+                var user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.SrcAccountNumber);
+                var sender = (AccountHolder)user;
+
                 sender.AvailableBalance -= transaction.Amount;
 
-                var beneficiary = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.DestAccountNumber);
+                user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.DestAccountNumber);
+                var beneficiary = (AccountHolder)user;
+
                 beneficiary.AvailableBalance += transaction.Amount;
 
                 _ = await BankContext.SaveChangesAsync();
@@ -150,13 +161,13 @@ namespace Bank
 
         }
 
-        public async Task<List<Transaction>> GetTransactions(int accountHolderId)
+        public async Task<List<Transaction>> GetTransactions(string accountHolderId)
         {
-            var transactions = await BankContext.Transactions.Where(b => b.AccountHolderId == accountHolderId).ToListAsync();
+            var transactions = await BankContext.Transactions.Where(b => b.Id == accountHolderId).ToListAsync();
             return transactions;
         }
 
-        public async Task ChangePassword(int bankId, string username, string newPassword)
+        public async Task ChangePassword(string bankId, string username, string newPassword)
         {
             var accountHolder = GetAccountHolder(bankId, username);
             accountHolder.Password = newPassword;

@@ -16,7 +16,7 @@ namespace Bank
         }
         public bool IsTransactionExists(string transactionUID)
         {
-            var transaction = BankContext.Transactions.FirstOrDefault(b => b.TransactionUId == transactionUID);
+            var transaction = BankContext.Transactions.FirstOrDefault(b => b.Id == transactionUID);
             if (transaction != null)
                 return true;
             else
@@ -24,7 +24,7 @@ namespace Bank
 
         }
 
-        public double GetTrasferAmount(int bankId, FundTransferOption bankOption, double amount)
+        public double GetTrasferAmount(string bankId, FundTransferOption bankOption, double amount)
         {
             double totaltrasferamount = 0;
             var serviceCharge = BankContext.ServiceCharges.FirstOrDefault(b => b.BankId == bankId);
@@ -54,14 +54,15 @@ namespace Bank
 
         public Transaction GetTransaction(string transactionUId)
         {
-            var transaction = BankContext.Transactions.Where(b => b.TransactionUId == transactionUId).FirstOrDefault<Transaction>();
+            var transaction = BankContext.Transactions.Where(b => b.Id == transactionUId).FirstOrDefault<Transaction>();
             return transaction;
         }
 
         public async Task RevertTransaction(string transactionUId)
         {
             var transaction = GetTransaction(transactionUId);
-            var accountHolder = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.SrcAccountNumber);
+            var user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.SrcAccountNumber);
+            var accountHolder = (AccountHolder)user;
             try
             {
                 switch (transaction.Type)
@@ -75,7 +76,8 @@ namespace Bank
                         break;
 
                     case TransactionType.Transfer:
-                        var beneficiary = BankContext.AccountHolders.SingleOrDefault(b => b.AccountNumber == transaction.DestAccountNumber);
+                        user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.DestAccountNumber);
+                        var beneficiary = (AccountHolder)user;
 
                         accountHolder.AvailableBalance += transaction.Amount;
                         beneficiary.AvailableBalance -= transaction.Amount;
@@ -84,7 +86,7 @@ namespace Bank
                         break;
                 }
 
-                transaction.IsReverted = true;
+                transaction.Type = TransactionType.Reverted;
 
                 _ = await BankContext.SaveChangesAsync();
             }

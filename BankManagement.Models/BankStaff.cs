@@ -6,7 +6,6 @@ namespace Bank
 {
     public class BankStaff : User
     {
-        public string AccountNumber { get; set; }
         public string EmployeeID { get; set; }
 
     }

@@ -30,7 +30,7 @@ namespace Bank
             try
             {
                 string bankUid = bankName.Substring(0, 3) + System.DateTime.Now.ToString("ddmmyyyy");
-                var bank = new Bank { BankUId = bankUid, Name = bankName };
+                var bank = new Bank { Id = bankUid, Name = bankName };
 
                 BankContext.Banks.Add(bank);
 
@@ -78,7 +78,7 @@ namespace Bank
 
         }
 
-        public async Task<Bank> GetBank(int bankId)
+        public async Task<Bank> GetBankThroughID(string bankId)
         {
             try
             {
@@ -105,16 +105,16 @@ namespace Bank
             return banks;
         }
 
-        public async Task<int> GetBankID(string bankName)
+        public async Task<string> GetBankID(string bankName)
         {
             var banks = await BankContext.Banks.Where(b => b.Name == bankName).ToListAsync();
             return banks[0].Id;
         }
 
 
-        public bool IsStaffExists(int bankID, string username)
+        public bool IsStaffExists(string bankID, string username)
         {
-            var exists = BankContext.Employees.Where(b => b.UserName == username && b.BankId == bankID).FirstOrDefault<BankStaff>();
+            var exists = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankID);
             if (exists != null)
                 return true;
             else
@@ -125,10 +125,11 @@ namespace Bank
         {
             try
             {
-                var count = await BankContext.Employees.Where(b => b.BankId == bankStaff.BankId).ToListAsync();
+                var count = await BankContext.Users.Where(b => b.BankId == bankStaff.BankId).ToListAsync();
                 bankStaff.EmployeeID = (count.Count + 1).ToString();
-                bankStaff.AccountNumber = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
-                BankContext.Employees.Add(bankStaff);
+                bankStaff.Id = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+
+                BankContext.Users.Add(bankStaff);
                 _ = await BankContext.SaveChangesAsync();
             }
             catch (Exception)
@@ -136,13 +137,14 @@ namespace Bank
             }
         }
 
-        public async Task<BankStaff> GetBankStaff(int bankId, string username)
+        public BankStaff GetBankStaff(string bankId, string username)
         {
-            var staff = await BankContext.Employees.Where(b => b.UserName == username && b.BankId == bankId).ToListAsync();
-            return staff[0];
+            var user = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankId);
+            var staff = (BankStaff)user;
+            return staff;
         }
 
-        public bool IsCurrencyExists(int bankId, string currencyCode)
+        public bool IsCurrencyExists(string bankId, string currencyCode)
         {
             var exists = BankContext.Currencies.Where(b => b.CurrencyCode == currencyCode && b.BankId == bankId).FirstOrDefault<Currency>();
             if (exists != null)
@@ -153,7 +155,7 @@ namespace Bank
 
 
 
-        public async Task AddCurrency(int bankId, Currency currency)
+        public async Task AddCurrency(Currency currency)
         {
             try
             {
@@ -166,7 +168,7 @@ namespace Bank
             }
         }
 
-        public async Task SetSameBankRate(int bankId, double newRate, ServiceCharges serviceChargeType)
+        public async Task SetSameBankRate(string bankId, double newRate, ServiceCharges serviceChargeType)
         {
             var serviceCharge = BankContext.ServiceCharges.SingleOrDefault(b => b.BankId == bankId);
 
@@ -182,7 +184,7 @@ namespace Bank
             _ = await BankContext.SaveChangesAsync();
         }
 
-        public async Task SetOtherBankRate(int bankId, double newRate, ServiceCharges serviceChargeType)
+        public async Task SetOtherBankRate(string bankId, double newRate, ServiceCharges serviceChargeType)
         {
             var serviceCharge = BankContext.ServiceCharges.SingleOrDefault(b => b.BankId == bankId);
 

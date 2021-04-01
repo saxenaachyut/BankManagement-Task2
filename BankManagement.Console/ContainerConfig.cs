@@ -11,10 +11,11 @@ namespace Bank
         {
             var builder = new ContainerBuilder();
 
+            builder.RegisterType<BankApplication>().As<IBankApplication>();
+
             builder.RegisterType<AccountHolderServices>().As<IAccountHolderServices>();
             builder.RegisterType<BankServices>().As<IBankServices>();
             builder.RegisterType<TransactionServices>().As<ITransactionServices>();
-
             return builder.Build();
         }
     }

@@ -14,7 +14,7 @@ namespace Bank
         public double ExcahngeRate { get; set; }
         
         public bool IsDefault { get; set; }
-        public int BankId { get; set; }
+        public string BankId { get; set; }
         public Bank Bank { get; set; }
 
     }

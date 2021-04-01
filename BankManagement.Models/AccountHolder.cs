@@ -10,7 +10,6 @@ namespace Bank
         {
             this.Transactions = new List<Transaction>();
         }
-        public string AccountNumber { get; set; }
        
         public double AvailableBalance { get; set; }
 

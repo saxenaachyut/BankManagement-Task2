@@ -9,17 +9,17 @@ namespace Bank
 
         Task AddBank(string bankName);
         Task AddBankStaff(BankStaff bankStaff);
-        Task AddCurrency(int bankId, Currency currency);
-        Task<Bank> GetBank(int bankId);
+        Task AddCurrency(Currency currency);
         Task<Bank> GetBank(string bankName);
         Task<int> GetBankCount();
-        Task<int> GetBankID(string bankName);
+        Task<string> GetBankID(string bankName);
         Task<List<Bank>> GetBankList();
-        Task<BankStaff> GetBankStaff(int bankId, string username);
+        BankStaff GetBankStaff(string bankId, string username);
+        Task<Bank> GetBankThroughID(string bankId);
         bool IsBankExists(string bankName);
-        bool IsCurrencyExists(int bankId, string currencyCode);
-        bool IsStaffExists(int bankID, string username);
-        Task SetOtherBankRate(int bankId, double newRate, ServiceCharges serviceChargeType);
-        Task SetSameBankRate(int bankId, double newRate, ServiceCharges serviceChargeType);
+        bool IsCurrencyExists(string bankId, string currencyCode);
+        bool IsStaffExists(string bankID, string username);
+        Task SetOtherBankRate(string bankId, double newRate, ServiceCharges serviceChargeType);
+        Task SetSameBankRate(string bankId, double newRate, ServiceCharges serviceChargeType);
     }
 }

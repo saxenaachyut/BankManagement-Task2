@@ -7,7 +7,7 @@ namespace Bank
         BankContext BankContext { get; set; }
 
         Transaction GetTransaction(string transactionUId);
-        double GetTrasferAmount(int bankId, FundTransferOption bankOption, double amount);
+        double GetTrasferAmount(string bankId, FundTransferOption bankOption, double amount);
         bool IsTransactionExists(string transactionUID);
         Task RevertTransaction(string transactionUId);
     }

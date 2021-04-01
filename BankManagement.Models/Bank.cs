@@ -14,11 +14,12 @@ namespace Bank
             this.ServiceChargeRates = new ServiceChargeRates();
         }
 
-        public int Id { get; set; }
-        public string BankUId { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
+
         public ServiceChargeRates ServiceChargeRates {get; set;}
+
         public List<AccountHolder> Accounts { get; set; }
 
         public List<BankStaff> Employees { get; set; }

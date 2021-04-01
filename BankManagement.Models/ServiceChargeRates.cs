@@ -15,7 +15,7 @@ namespace Bank
 
         public double OtherBankIMPS { get; set; }   
 
-        public int BankId { get; set; }
+        public string BankId { get; set; }
         public Bank Bank { get; set; }
     }
 }
