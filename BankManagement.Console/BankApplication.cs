@@ -298,6 +298,7 @@ namespace Bank
             accountHolder.Email = Utilities.GetStringInput("Enter User Email Address");
 
             await AccountHolderService.AddAccountHolder(bank.Id, accountHolder);
+            System.Console.Clear();
         }
 
         public async Task UpdateAccountHolder(Bank bank)

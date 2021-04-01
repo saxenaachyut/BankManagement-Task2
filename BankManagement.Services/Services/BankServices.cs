@@ -114,7 +114,7 @@ namespace Bank
 
         public bool IsStaffExists(string bankID, string username)
         {
-            var exists = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankID);
+            var exists = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankID && b.UserType == UserType.Staff);
             if (exists != null)
                 return true;
             else
@@ -128,6 +128,7 @@ namespace Bank
                 var count = await BankContext.Users.Where(b => b.BankId == bankStaff.BankId).ToListAsync();
                 bankStaff.EmployeeID = (count.Count + 1).ToString();
                 bankStaff.Id = bankStaff.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
+                bankStaff.UserType = UserType.Staff;
 
                 BankContext.Users.Add(bankStaff);
                 _ = await BankContext.SaveChangesAsync();
@@ -139,7 +140,7 @@ namespace Bank
 
         public BankStaff GetBankStaff(string bankId, string username)
         {
-            var user = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankId);
+            var user = BankContext.Users.FirstOrDefault(b => b.UserName == username && b.BankId == bankId && b.UserType == UserType.Staff);
             var staff = (BankStaff)user;
             return staff;
         }

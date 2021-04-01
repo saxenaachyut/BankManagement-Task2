@@ -32,6 +32,7 @@ namespace Bank
                 accountHolder.Id = accountHolder.Name.Substring(0, 3) + DateTime.Now.ToString("ddMMyyyy");
                 accountHolder.AvailableBalance = 0;
                 accountHolder.BankId = bankId;
+                accountHolder.UserType = UserType.AccountHolder;
 
                 BankContext.Users.Add(accountHolder);
                 _ = await BankContext.SaveChangesAsync();
@@ -45,9 +46,9 @@ namespace Bank
         {
             try
             {
-                var accountHolders = BankContext.Users.SingleOrDefault(b => b.UserName == username && b.BankId == bankId);
+                var accountHolder = BankContext.Users.SingleOrDefault(b => b.UserName == username && b.BankId == bankId && b.UserType == UserType.AccountHolder);
 
-                return (AccountHolder)accountHolders;
+                return (AccountHolder)accountHolder;
             }
 
             catch (Exception)
