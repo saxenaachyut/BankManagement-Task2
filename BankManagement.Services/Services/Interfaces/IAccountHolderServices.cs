@@ -1,13 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public interface IAccountHolderServices
     {
-        Task AddAccountHolder(string bankId, AccountHolder accountHolder);
+        Task<string> AddAccountHolder(string bankId, AccountHolder accountHolder);
         Task ChangePassword(string bankId, string username, string newPassword);
-        Task DepositAmount(Transaction transaction);
+        Task<string> DepositAmount(Transaction transaction);
         Task<double> GetAccountBalance(string bankId, string accountHolderId);
         AccountHolder GetAccountHolder(string bankId, string username);
         AccountHolder GetAccountHolderThroughID(string bankId, string accountID);
@@ -15,7 +15,7 @@ namespace Bank
         bool IsAccountHolderExists(string bankId, string username);
         bool IsSufficientFundsAvailable(string accountHolderId, double amount);
         Task RemoveAccountHolder(string bankId, string username);
-        Task TransferFunds(Transaction transaction);
-        Task WithdrawAmount(Transaction transaction);
+        Task<string> TransferFunds(Transaction transaction);
+        Task<string> WithdrawAmount(Transaction transaction);
     }
 }

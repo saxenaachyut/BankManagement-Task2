@@ -1,9 +1,14 @@
-﻿using System.Threading.Tasks;
+﻿using Bank.Services;
+using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Console
 {
     public interface IBankApplication
     {
+        IAccountHolderServices AccountHolderService { get; set; }
+        IBankServices BankService { get; set; }
+        ITransactionServices TransactionService { get; set; }
+
         Task AccountHolderMenu(Bank bank, AccountHolder accountHolder);
         Task AddNewCurrency(Bank bank);
         Task BankLogin(Bank bank);

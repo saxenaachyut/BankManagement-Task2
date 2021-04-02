@@ -2,8 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Bank.Models;
 
-namespace Bank
+namespace Bank.Services
 {
     public class BankContext : DbContext
     {

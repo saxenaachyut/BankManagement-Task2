@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public class AccountHolderServices : IAccountHolderServices
     {
@@ -25,7 +25,7 @@ namespace Bank
                 return false;
         }
 
-        public async Task AddAccountHolder(string bankId, AccountHolder accountHolder)
+        public async Task<string> AddAccountHolder(string bankId, AccountHolder accountHolder)
         {
             try
             {
@@ -36,9 +36,12 @@ namespace Bank
 
                 BankContext.Users.Add(accountHolder);
                 _ = await BankContext.SaveChangesAsync();
+
+                return accountHolder.Id;
             }
             catch (Exception)
             {
+                return null;
             }
         }
 
@@ -92,7 +95,7 @@ namespace Bank
             var accountHolder = (AccountHolder)user[0];
             return accountHolder.AvailableBalance;
         }
-        public async Task DepositAmount(Transaction transaction)
+        public async Task<string> DepositAmount(Transaction transaction)
         {
             try
             {
@@ -102,9 +105,12 @@ namespace Bank
                 accountHolder.AvailableBalance += transaction.Amount;
 
                 _ = await BankContext.SaveChangesAsync();
+
+                return transaction.Id;
             }
             catch (Exception)
             {
+                return null;
             }
         }
 
@@ -119,7 +125,7 @@ namespace Bank
                 return false;
         }
 
-        public async Task WithdrawAmount(Transaction transaction)
+        public async Task<string> WithdrawAmount(Transaction transaction)
         {
             try
             {
@@ -131,13 +137,16 @@ namespace Bank
 
                 _ = await BankContext.SaveChangesAsync();
 
+                return transaction.Id;
+
             }
             catch (Exception)
             {
+                return null;
             }
         }
 
-        public async Task TransferFunds(Transaction transaction)
+        public async Task<string> TransferFunds(Transaction transaction)
         {
             try
             {
@@ -154,9 +163,12 @@ namespace Bank
                 beneficiary.AvailableBalance += transaction.Amount;
 
                 _ = await BankContext.SaveChangesAsync();
+
+                return transaction.Id;
             }
             catch (Exception)
             {
+                return null;
             }
 
         }

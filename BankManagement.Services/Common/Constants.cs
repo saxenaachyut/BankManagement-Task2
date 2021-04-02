@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank
+namespace Bank.Services
 {
     public class Constants
     {

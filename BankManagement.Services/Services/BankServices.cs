@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public class BankServices : IBankServices
     {
@@ -13,7 +13,7 @@ namespace Bank
 
         public BankServices()
         {
-            this.BankContext = new BankContext();
+            BankContext = new BankContext();
         }
 
         public bool IsBankExists(string bankName)
@@ -25,7 +25,7 @@ namespace Bank
                 return false;
         }
 
-        public async Task AddBank(string bankName)
+        public async Task<string> AddBank(string bankName)
         {
             try
             {
@@ -42,6 +42,7 @@ namespace Bank
 
                 BankContext.Banks.Add(bank);
 
+
                 var currency = new Currency()
                 {
                     CurrencyCode = Constants.DefaultCurrencyCode,
@@ -52,12 +53,14 @@ namespace Bank
                     Bank = bank
                 };
 
-
-                BankContext.Currencies.Add(currency);
+                await AddCurrency(currency);
                 _ = await BankContext.SaveChangesAsync();
+
+                return bank.Id;
             }
             catch (Exception)
             {
+                return null;
             }
         }
 
@@ -119,7 +122,7 @@ namespace Bank
                 return false;
         }
 
-        public async Task AddBankStaff(BankStaff bankStaff)
+        public async Task<string> AddBankStaff(BankStaff bankStaff)
         {
             try
             {
@@ -130,9 +133,12 @@ namespace Bank
 
                 BankContext.Users.Add(bankStaff);
                 _ = await BankContext.SaveChangesAsync();
+
+                return bankStaff.Id;
             }
             catch (Exception)
             {
+                return null;
             }
         }
 
@@ -154,16 +160,19 @@ namespace Bank
 
 
 
-        public async Task AddCurrency(Currency currency)
+        public async Task<string> AddCurrency(Currency currency)
         {
             try
             {
                 BankContext.Currencies.Add(currency);
                 _ = await BankContext.SaveChangesAsync();
 
+                return currency.CurrencyCode;
+
             }
             catch (Exception)
             {
+                return null;
             }
         }
 

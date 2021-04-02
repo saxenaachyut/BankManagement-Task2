@@ -1,9 +1,10 @@
 ﻿using Autofac;
+using Bank.Services;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Bank
+namespace Bank.Console
 {
     public static class ContainerConfig
     {

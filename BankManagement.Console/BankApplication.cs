@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
+using Bank.Services;
 
-namespace Bank
+namespace Bank.Console
 {
     public class Program
     {
@@ -79,18 +80,32 @@ namespace Bank
                 bankName = Utilities.GetStringInput("Bank Already Exists, Enter a new Bank Name :");
             }
 
-            await BankService.AddBank(bankName);
-            System.Console.WriteLine("Added bank");
+            if (await BankService.AddBank(bankName) != null)
+            {
+                System.Console.WriteLine("Added bank");
 
-            BankStaff admin = new BankStaff();
-            admin.Name = Utilities.GetStringInput("Enter name for Admin account :"); ;
-            admin.UserName = Utilities.GetStringInput("Enter Username for Admin account :");
-            admin.Email = Utilities.GetStringInput("Enter Email Address for Admin account :");
-            admin.Password = Utilities.GetStringInput("Enter password for Admin Account :");
-            admin.BankId = BankService.GetBankID(bankName);
+                BankStaff admin = new BankStaff();
+                admin.Name = Utilities.GetStringInput("Enter name for Admin account :"); ;
+                admin.UserName = Utilities.GetStringInput("Enter Username for Admin account :");
+                admin.Email = Utilities.GetStringInput("Enter Email Address for Admin account :");
+                admin.Password = Utilities.GetStringInput("Enter password for Admin Account :");
+                admin.BankId = BankService.GetBankID(bankName);
 
-            await BankService.AddBankStaff(admin);
-            System.Console.WriteLine("Admin Added");
+               if( await BankService.AddBankStaff(admin) != null)
+                {
+                    System.Console.WriteLine("Admin successfully added");
+                }
+               else
+                {
+
+                }
+            }
+
+            else
+            {
+                System.Console.WriteLine("bank not added");
+                await MainMenu();
+            }
         }
 
         public async Task Login()
@@ -300,7 +315,12 @@ namespace Bank
             accountHolder.PhoneNumber = Utilities.GetStringInput("Enter User Phone Number :");
             accountHolder.Email = Utilities.GetStringInput("Enter User Email Address");
 
-            await AccountHolderService.AddAccountHolder(bank.Id, accountHolder);
+            if (await AccountHolderService.AddAccountHolder(bank.Id, accountHolder) != null)
+            {
+                System.Console.WriteLine("Account Holder added successfully");
+            }
+            else
+                System.Console.WriteLine("Account Holder not added successfully");
             System.Console.Clear();
         }
 
@@ -446,7 +466,14 @@ namespace Bank
                 Type = TransactionType.Credit
             };
 
-            await AccountHolderService.DepositAmount(transaction);
+            if( await AccountHolderService.DepositAmount(transaction) != null)
+            {
+                System.Console.WriteLine("Transaction Successfull");
+            }
+            else
+            {
+                System.Console.WriteLine("Transaction not Successfull");
+            }
 
             Utilities.DisplayMessage("Total Closing Amount : " + await AccountHolderService.GetAccountBalance(bank.Id, accountHolder.Id));
         }
@@ -469,7 +496,15 @@ namespace Bank
 
             if (AccountHolderService.IsSufficientFundsAvailable(accountHolder.Id, amount))
             {
-                await AccountHolderService.WithdrawAmount(transaction);
+                if (await AccountHolderService.WithdrawAmount(transaction) != null)
+                {
+                    System.Console.WriteLine("Transaction Successfull");
+
+                }
+                else
+                {
+                    System.Console.WriteLine("Transaction not Successfull");
+                }
 
                 Utilities.DisplayMessage("Total Closing Amount : " + await AccountHolderService.GetAccountBalance(bank.Id, accountHolder.Id));
             }
@@ -560,10 +595,16 @@ namespace Bank
                     Type = TransactionType.Transfer
                 };
 
-                await AccountHolderService.TransferFunds(transaction);
-
-                Utilities.DisplayMessage("Amount Successfull Transfered \n" +
+                if (await AccountHolderService.TransferFunds(transaction) != null)
+                {
+                    Utilities.DisplayMessage("Amount Successfull Transfered \n" +
                     "Total closing amount " + await AccountHolderService.GetAccountBalance(bank.Id, accountHolder.Id));
+
+                }
+                else
+                {
+                    System.Console.WriteLine("Transaction not Successfull");
+                }          
             }
             else
             {
@@ -612,9 +653,17 @@ namespace Bank
                         Type = TransactionType.Transfer
                     };
 
-                    await AccountHolderService.TransferFunds(transaction);
-                    Utilities.DisplayMessage("Amount Successfull Transfered \n" +
+                    
+                    if (await AccountHolderService.TransferFunds(transaction) != null)
+                    {
+                        Utilities.DisplayMessage("Amount Successfull Transfered \n" +
                         "Total closing amount " + await AccountHolderService.GetAccountBalance(bank.Id, accountHolder.Id));
+
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Transaction not Successfull");
+                    }
                 }
                 else
                 {
@@ -638,7 +687,16 @@ namespace Bank
                 string transactionID = Utilities.GetStringInput("Enter Transaction ID :");
                 if (TransactionService.IsTransactionExists(transactionID))
                 {
-                    await TransactionService.RevertTransaction(transactionID);
+                    if (await TransactionService.RevertTransaction(transactionID) != null)
+                    {
+                        Utilities.DisplayMessage("Amount Successfull Reverted \n" +
+                        "Total closing amount " + await AccountHolderService.GetAccountBalance(bank.Id, accountHolder.Id));
+
+                    }
+                    else
+                    {
+                        System.Console.WriteLine("Transaction not Successfull");
+                    }
                 }
                 else
                 {

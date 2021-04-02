@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public interface ITransactionServices
     {
@@ -9,6 +9,6 @@ namespace Bank
         Transaction GetTransaction(string transactionUId);
         double GetTrasferAmount(string bankId, FundTransferOption bankOption, double amount);
         bool IsTransactionExists(string transactionUID);
-        Task RevertTransaction(string transactionUId);
+        Task<string> RevertTransaction(string transactionUId);
     }
 }

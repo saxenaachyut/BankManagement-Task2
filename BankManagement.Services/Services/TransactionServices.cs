@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public class TransactionServices : ITransactionServices
     {
@@ -58,7 +58,7 @@ namespace Bank
             return transaction;
         }
 
-        public async Task RevertTransaction(string transactionUId)
+        public async Task<string> RevertTransaction(string transactionUId)
         {
             var transaction = GetTransaction(transactionUId);
             var user = BankContext.Users.SingleOrDefault(b => b.Id == transaction.SrcAccountNumber);
@@ -89,9 +89,12 @@ namespace Bank
                 transaction.Type = TransactionType.Reverted;
 
                 _ = await BankContext.SaveChangesAsync();
+
+                return transaction.Id;
             }
             catch (Exception)
             {
+                return null;
             }
 
         }

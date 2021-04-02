@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Bank
+namespace Bank.Services
 {
     public interface IBankServices
     {
         BankContext BankContext { get; set; }
 
-        Task AddBank(string bankName);
-        Task AddBankStaff(BankStaff bankStaff);
-        Task AddCurrency(Currency currency);
+        Task<string> AddBank(string bankName);
+        Task<string> AddBankStaff(BankStaff bankStaff);
+        Task<string> AddCurrency(Currency currency);
         Task<Bank> GetBank(string bankName);
         Task<int> GetBankCount();
         string GetBankID(string bankName);
